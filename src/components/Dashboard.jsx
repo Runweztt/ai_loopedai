@@ -1,32 +1,18 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PaywallModal from './PaywallModal';
-import ReviewDocumentsButton from './ReviewDocumentsButton';
-import DocumentReviewModal from './DocumentReviewModal';
-import ReviewReportCard from './ReviewReportCard';
-import ChatSidebar from './ChatSidebar';
 
 const FREE_PROMPT_LIMIT = 4;
 const PROMPT_COUNT_KEY = 'immigration_ai_prompt_count';
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
-
-const WELCOME_MSG = (name) => ({
-  role: 'assistant',
-  text: `Hello ${name || 'there'}! I'm your Immigration AI Assistant. Ask me anything about visas, permits, immigration policies, or relocation processes. How can I help you today?`,
-});
-
-const generateSessionId = () =>
-  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-  });
 
 const Dashboard = ({ userData, onLogout, onUpgrade }) => {
-  const [messages, setMessages] = useState([WELCOME_MSG(userData?.full_name)]);
-  const [sessionId, setSessionId] = useState(() => generateSessionId());
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      role: 'assistant',
+      text: `Hello ${userData?.full_name || 'there'}! 👋 I'm your Immigration AI Assistant. Ask me anything about visas, permits, immigration policies, or relocation processes. How can I help you today?`,
+    },
+  ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [loadingSession, setLoadingSession] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -35,8 +21,6 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
   const getPromptCount = () => parseInt(localStorage.getItem(PROMPT_COUNT_KEY) || '0', 10);
   const [promptCount, setPromptCount] = useState(getPromptCount());
   const [showPaywall, setShowPaywall] = useState(!isPremium && getPromptCount() >= FREE_PROMPT_LIMIT);
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [reviewChatContext, setReviewChatContext] = useState({});
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -46,35 +30,9 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
     scrollToBottom();
   }, [messages]);
 
-  // ── Session handlers ────────────────────────────────────────────────
-
-  const handleNewChat = useCallback(() => {
-    setSessionId(generateSessionId());
-    setMessages([WELCOME_MSG(userData?.full_name)]);
-    setInput('');
-    inputRef.current?.focus();
-  }, [userData?.full_name]);
-
-  const handleSelectSession = useCallback(async (sid) => {
-    if (sid === sessionId) return;
-    setLoadingSession(true);
-    try {
-      const res = await fetch(`${API_BASE}/api/v1/chats/${sid}`, {
-        headers: { Authorization: `Bearer ${userData?.access_token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const loaded = data.messages.map((m) => ({ role: m.role, text: m.text }));
-        setMessages([WELCOME_MSG(userData?.full_name), ...loaded]);
-        setSessionId(sid);
-        setTimeout(() => scrollToBottom(), 100);
-      }
-    } catch {
-      // keep current chat on error
-    } finally {
-      setLoadingSession(false);
-    }
-  }, [sessionId, userData]);
+  // Use Vite proxy in dev (empty base = same origin, proxied to :8000)
+  // Override with VITE_API_BASE_URL for production deployments
+  const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -113,11 +71,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`, // FIX: attached Bearer token
         },
-        body: JSON.stringify({
-          text: userMessage,
-          session_id: sessionId,
-          chat_history: messages.slice(-10).map((m) => ({ role: m.role, text: m.text || '' })),
-        }),
+        body: JSON.stringify({ text: userMessage }),
       });
 
       // FIX: Handle 401 specifically — clear session and redirect to login
@@ -174,68 +128,11 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
     }
   };
 
-  const handleOpenReview = () => {
-    // Extract context from current chat messages to pre-fill the modal
-    const allText = messages.map((m) => m.text || '').join(' ').toLowerCase();
-    const context = {};
-    if (allText.includes('canada')) context.country = 'Canada';
-    else if (allText.includes('uk') || allText.includes('united kingdom')) context.country = 'UK';
-    else if (allText.includes('usa') || allText.includes('united states')) context.country = 'USA';
-    else if (allText.includes('australia')) context.country = 'Australia';
-    if (allText.includes('study permit') || allText.includes('student visa') || allText.includes('f-1')) context.visa_type = 'Study Permit';
-    else if (allText.includes('work permit') || allText.includes('work visa') || allText.includes('h-1b')) context.visa_type = 'Work Permit';
-    else if (allText.includes('visitor') || allText.includes('tourist')) context.visa_type = 'Visitor Visa';
-    setReviewChatContext(context);
-    setShowReviewModal(true);
-  };
-
-  const handleReportReady = (report, country, visaType) => {
-    setShowReviewModal(false);
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: 'assistant',
-        text: `Here is your visa document review for **${visaType}** — ${country}:`,
-        reviewReport: report,
-        reviewCountry: country,
-        reviewVisaType: visaType,
-      },
-    ]);
-    setTimeout(() => scrollToBottom(), 100);
-  };
-
   return (
     <>
     {/* Freemium paywall — non-dismissible */}
     {showPaywall && <PaywallModal promptsUsed={promptCount} onUpgrade={onUpgrade} />}
-
-    {/* Chat history sidebar */}
-    <ChatSidebar
-      userData={userData}
-      activeSessionId={sessionId}
-      onSelectSession={handleSelectSession}
-      onNewChat={handleNewChat}
-      isOpen={sidebarOpen}
-      onToggle={() => setSidebarOpen((o) => !o)}
-    />
-
-    {/* Visa review modal — triggered by user click only */}
-    {showReviewModal && (
-      <DocumentReviewModal
-        onClose={() => setShowReviewModal(false)}
-        onReportReady={handleReportReady}
-        chatContext={reviewChatContext}
-        userData={userData}
-      />
-    )}
-    <div
-      className="w-full max-w-3xl flex flex-col transition-all duration-300"
-      style={{
-        height: 'calc(100vh - 160px)',
-        marginLeft: sidebarOpen ? '272px' : 'auto',
-        marginRight: 'auto',
-      }}
-    >
+    <div className="w-full max-w-3xl mx-auto flex flex-col" style={{ height: 'calc(100vh - 160px)' }}>
       {/* Header */}
       <div className="glass rounded-t-3xl p-5 border-b border-white/5">
         <div className="flex items-center justify-between">
@@ -267,15 +164,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto glass border-x border-white/5 p-5 space-y-4 scrollbar-thin relative">
-        {loadingSession && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10 rounded-sm">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-6 h-6 border-2 border-premium-gold/40 border-t-premium-gold rounded-full animate-spin" />
-              <span className="text-xs text-white/50">Loading conversation...</span>
-            </div>
-          </div>
-        )}
+      <div className="flex-1 overflow-y-auto glass border-x border-white/5 p-5 space-y-4 scrollbar-thin">
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -299,13 +188,6 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
                 </div>
               )}
               <p className="whitespace-pre-wrap">{msg.text}</p>
-              {msg.reviewReport && (
-                <ReviewReportCard
-                  report={msg.reviewReport}
-                  country={msg.reviewCountry}
-                  visaType={msg.reviewVisaType}
-                />
-              )}
             </div>
           </div>
         ))}
@@ -335,9 +217,6 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
 
       {/* Input Area */}
       <form onSubmit={handleSend} className="glass rounded-b-3xl border-t border-white/5 p-4">
-        <div className="flex gap-2 mb-3">
-          <ReviewDocumentsButton onClick={handleOpenReview} disabled={loading} />
-        </div>
         <div className="flex gap-3">
           <input
             ref={inputRef}

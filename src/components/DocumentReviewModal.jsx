@@ -171,7 +171,9 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
   const startPolling = (id) => {
     pollRef.current = setInterval(async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/visa-review/${id}/status`);
+        const res = await fetch(`${API_BASE}/api/visa-review/${id}/status`, {
+          headers: userData?.access_token ? { Authorization: `Bearer ${userData.access_token}` } : {},
+        });
         if (!res.ok) return;
         const data = await res.json();
 
