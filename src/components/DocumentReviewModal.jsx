@@ -15,7 +15,7 @@ const STEPS = ['details', 'checklist', 'upload', 'progress', 'report'];
 
 const ACCEPTED_TYPES = '.pdf,.docx,.jpg,.jpeg,.png';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.loopedai.io';
 const POLL_INTERVAL_MS = 3000;
 
 // ── Sub-components ────────────────────────────────────────────────────

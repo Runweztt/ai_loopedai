@@ -7,7 +7,7 @@ const PaymentPage = ({ userData, onPaymentSuccess, onBack }) => {
   const [expiry, setExpiry] = useState('');
   const [cvc, setCvc] = useState('');
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.loopedai.io';
 
   const handlePayment = async (e) => {
     e.preventDefault();

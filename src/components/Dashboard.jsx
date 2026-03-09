@@ -32,7 +32,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
 
   // Use Vite proxy in dev (empty base = same origin, proxied to :8000)
   // Override with VITE_API_BASE_URL for production deployments
-  const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.loopedai.io';
 
   const handleSend = async (e) => {
     e.preventDefault();
