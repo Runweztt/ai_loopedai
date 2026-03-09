@@ -153,7 +153,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
       {/* Main chat panel — shifts right on desktop when sidebar open, overlaid on mobile */}
       <div
         className={`flex flex-col transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : ''}`}
-        style={{ height: 'calc(100vh - 160px)' }}
+        style={{ height: 'calc(100svh - 128px)', minHeight: 'calc(100vh - 160px)' }}
       >
         {/* Header */}
         <div className="glass rounded-t-3xl px-4 py-3 md:p-5 border-b border-white/5">

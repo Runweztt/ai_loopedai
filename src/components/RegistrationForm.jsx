@@ -28,14 +28,24 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
 
       if (response.ok) {
         const data = await response.json();
+        // Exclude password — never persist it to localStorage via userData
         onSafeSuccess({
-          ...formData,
-          link_code: data.link_code,
-          access_token: data.access_token,
+          email:          formData.email,
+          full_name:      formData.full_name,
+          country:        formData.country,
+          location:       formData.location,
+          link_telegram:  formData.link_telegram,
+          link_code:      data.link_code,
+          access_token:   data.access_token,
         });
       } else {
         const err = await response.json();
-        setError(err.detail || 'Registration failed');
+        // Pydantic 422 returns detail as an array of {msg, loc, type} objects.
+        // Rendering an array directly in JSX causes React error #31 (blank page).
+        const detail = Array.isArray(err.detail)
+          ? err.detail.map((e) => e.msg).join('; ')
+          : err.detail;
+        setError(detail || 'Registration failed. Please try again.');
       }
     } catch (err) {
       console.error('Registration request failed:', err);
@@ -67,13 +77,14 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
           value={formData.email}
           onChange={(e) => setFormData({...formData, email: e.target.value})}
         />
-        <input 
-          type="password" placeholder="Password" required 
+        <input
+          type="password" placeholder="Password (min 8 characters)" required
+          minLength={8}
           className={inputClass}
           value={formData.password}
           onChange={(e) => setFormData({...formData, password: e.target.value})}
         />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <input 
             type="text" placeholder="Country" required 
             className={inputClass}

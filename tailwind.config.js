@@ -4,15 +4,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        void:         '#050B1B',
-        navy:         '#0D1526',
-        'navy-light':  '#1A2540',
-        'blue-brand':  '#1D45BF',
-        'blue-muted':  '#2A3F8F',
-        gold:          '#E9B308',
-        'gold-muted':  '#A07C06',
-        'slate-text':  '#94A3B8',
-        'slate-dim':   '#475569',
+        void:           '#050B1B',
+        navy:           '#0D1526',
+        'navy-light':   '#1A2540',
+        'blue-brand':   '#1D45BF',
+        'blue-muted':   '#2A3F8F',
+        gold:           '#E9B308',
+        'gold-muted':   '#A07C06',
+        'slate-text':   '#94A3B8',
+        'slate-dim':    '#475569',
+        // App/chat UI tokens — aliases for the tokens above
+        'premium-gold': '#E9B308',
+        'premium-dark': '#050B1B',
+        'premium-blue': '#1D45BF',
       },
       fontFamily: {
         display: ['Syne', 'sans-serif'],

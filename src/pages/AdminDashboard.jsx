@@ -76,7 +76,7 @@ const AdminDashboard = ({ userData, onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#080808] text-white">
+    <div className="min-h-screen bg-void text-white">
       {/* Header */}
       <header className="border-b border-white/8 px-4 md:px-6 py-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -148,7 +148,7 @@ const AdminDashboard = ({ userData, onLogout }) => {
               <section>
                 <h2 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Users</h2>
 
-                <div className="grid grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
                   <Card label="Total"><p className="text-2xl md:text-3xl font-black">{users.total}</p></Card>
                   <Card label="Online"><p className="text-2xl md:text-3xl font-black text-green-400">{users.online}</p></Card>
                   <Card label="Offline"><p className="text-2xl md:text-3xl font-black text-white/30">{users.offline}</p></Card>

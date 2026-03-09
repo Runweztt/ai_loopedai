@@ -32,7 +32,10 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
         });
       } else {
         const err = await res.json();
-        setError(err.detail || 'Login failed. Check your email and password.');
+        const detail = Array.isArray(err.detail)
+          ? err.detail.map((e) => e.msg).join('; ')
+          : err.detail;
+        setError(detail || 'Login failed. Check your email and password.');
       }
     } catch (err) {
       console.error('Login request failed:', err);

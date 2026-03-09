@@ -49,7 +49,7 @@ const ChatSidebar = ({ userData, activeSessionId, onSelectSession, onNewChat, is
       <button
         onClick={onToggle}
         title={isOpen ? 'Close history' : 'Open chat history'}
-        className="fixed left-0 top-1/2 -translate-y-1/2 z-40 bg-white/5 border border-white/10 border-l-0 rounded-r-xl px-1.5 py-4 hover:bg-white/10 transition-all"
+        className="fixed left-0 top-[40%] -translate-y-1/2 z-40 bg-white/5 border border-white/10 border-l-0 rounded-r-xl px-1.5 py-4 hover:bg-white/10 transition-all"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +63,7 @@ const ChatSidebar = ({ userData, activeSessionId, onSelectSession, onNewChat, is
       {/* Sidebar panel */}
       <div
         className={`fixed left-0 top-0 h-full z-30 flex flex-col transition-all duration-300 ease-in-out
-          bg-[#0a0a0a] border-r border-white/8
+          bg-navy border-r border-white/8
           ${isOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}
       >
         {/* Header */}
