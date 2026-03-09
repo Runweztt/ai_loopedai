@@ -5,7 +5,7 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://72.61.213.67:8000';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +36,8 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
         setError(err.detail || 'Login failed. Check your email and password.');
       }
     } catch {
-      setError('Cannot connect to the server. Make sure the backend is running.');
+      console.error('Login request failed:', err);
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

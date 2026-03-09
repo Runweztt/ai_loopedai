@@ -14,7 +14,7 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
 
   // Use Vite proxy in dev (empty base = same origin, proxied to :8000)
   // Override with VITE_API_BASE_URL for production deployments
-  const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://72.61.213.67:8000';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +40,8 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
         setError(err.detail || 'Registration failed');
       }
     } catch (err) {
-      setError('Connection to backend failed');
+      console.error('Registration request failed:', err);
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
