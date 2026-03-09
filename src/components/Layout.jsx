@@ -17,7 +17,7 @@ const Layout = ({ children, isFullWidth }) => {
         </nav>
       </header>
       
-      <main className={`w-full mt-12 ${isFullWidth ? 'max-w-4xl' : 'max-w-lg'}`}>
+      <main className={`w-full ${isFullWidth ? 'max-w-5xl mt-0 px-2 md:px-4' : 'max-w-lg mt-12'}`}>
         {children}
       </main>
       

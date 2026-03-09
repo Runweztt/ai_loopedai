@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.loopedai.io';
+import { API_BASE } from '../constants';
 
 /**
  * Sidebar showing the user's past chat sessions.
@@ -28,15 +27,10 @@ const ChatSidebar = ({ userData, activeSessionId, onSelectSession, onNewChat, is
     }
   }, [userData?.access_token]);
 
-  // Load sessions when sidebar opens
+  // Load sessions when sidebar opens or active session changes
   useEffect(() => {
     if (isOpen) fetchSessions();
-  }, [isOpen, fetchSessions]);
-
-  // Refresh after a new chat completes (when activeSessionId changes)
-  useEffect(() => {
-    if (activeSessionId && isOpen) fetchSessions();
-  }, [activeSessionId]);
+  }, [isOpen, activeSessionId, fetchSessions]);
 
   const formatDate = (iso) => {
     if (!iso) return '';

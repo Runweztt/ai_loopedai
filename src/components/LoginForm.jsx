@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
+import { API_BASE } from '../constants';
 
 const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.loopedai.io';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +34,7 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
         const err = await res.json();
         setError(err.detail || 'Login failed. Check your email and password.');
       }
-    } catch {
+    } catch (err) {
       console.error('Login request failed:', err);
       setError('Something went wrong. Please try again.');
     } finally {

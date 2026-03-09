@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE } from '../constants';
 
 const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
@@ -12,9 +13,6 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Use Vite proxy in dev (empty base = same origin, proxied to :8000)
-  // Override with VITE_API_BASE_URL for production deployments
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api.loopedai.io';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
