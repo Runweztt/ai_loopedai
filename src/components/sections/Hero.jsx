@@ -56,12 +56,12 @@ export default function Hero() {
       <div className="absolute bottom-[-10%] left-[5%] w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(233,179,8,0.06) 0%, transparent 70%)' }} />
 
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-32 pb-24 w-full">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-20 md:pt-32 pb-14 md:pb-24 w-full">
         <div className="max-w-4xl">
 
           {/* Badge */}
           <div
-            className="inline-flex items-center gap-2 border border-blue-muted/40 bg-blue-brand/10 rounded-full px-4 py-1.5 mb-8 opacity-0 animate-fade-up"
+            className="inline-flex items-center gap-2 border border-blue-muted/40 bg-blue-brand/10 rounded-full px-4 py-1.5 mb-6 md:mb-8 opacity-0 animate-fade-up"
             style={{ animationDelay: '0ms', animationFillMode: 'forwards' }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-gold animate-glow-pulse" />
@@ -70,7 +70,7 @@ export default function Hero() {
 
           {/* Headline */}
           <h1
-            className="font-display font-extrabold text-5xl md:text-6xl lg:text-7xl leading-[1.08] tracking-tight mb-6 opacity-0 animate-fade-up"
+            className="font-display font-extrabold text-4xl md:text-6xl lg:text-7xl leading-[1.08] tracking-tight mb-5 md:mb-6 opacity-0 animate-fade-up"
             style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
           >
             Move to{' '}
@@ -91,7 +91,7 @@ export default function Hero() {
 
           {/* CTAs */}
           <div
-            className="flex flex-wrap items-center gap-4 mb-16 opacity-0 animate-fade-up"
+            className="flex flex-wrap items-center gap-4 mb-10 md:mb-16 opacity-0 animate-fade-up"
             style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
           >
             <Link

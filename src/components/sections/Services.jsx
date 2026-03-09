@@ -71,7 +71,7 @@ function Card({ service, index }) {
 export default function Services() {
   const ref = useScrollReveal()
   return (
-    <section className="py-28 bg-void">
+    <section className="py-16 md:py-28 bg-void">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div ref={ref} className="max-w-2xl mb-16">
           <p className="text-xs font-body font-semibold uppercase tracking-[0.2em] text-gold mb-4">What we do</p>

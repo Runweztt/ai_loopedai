@@ -42,16 +42,16 @@ function Step({ step }) {
 export default function HowItWorks() {
   const ref = useScrollReveal()
   return (
-    <section className="py-28 bg-navy/30">
+    <section className="py-16 md:py-28 bg-navy/30">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
-        <div ref={ref} className="max-w-xl mb-16">
+        <div ref={ref} className="max-w-xl mb-8 md:mb-16">
           <p className="text-xs font-body font-semibold uppercase tracking-[0.2em] text-gold mb-4">How it works</p>
           <h2 className="font-display font-extrabold text-4xl md:text-5xl text-white leading-tight">
             From question<br />
             <span className="font-serif italic text-slate-text">to clarity</span>
           </h2>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <div>{STEPS.map(s => <Step key={s.n} step={s} />)}</div>
           <div><TerminalBlock /></div>
         </div>

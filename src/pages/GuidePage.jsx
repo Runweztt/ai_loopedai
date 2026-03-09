@@ -146,10 +146,10 @@ export default function GuidePage() {
   return (
     <div className="pt-16 bg-void min-h-screen">
       {/* Hero */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 md:py-24">
         <div ref={heroRef} className="max-w-2xl">
           <p className="text-xs font-body font-semibold uppercase tracking-[0.2em] text-gold mb-4">Prompt Guide</p>
-          <h1 className="font-display font-extrabold text-5xl md:text-6xl text-white leading-tight mb-5">
+          <h1 className="font-display font-extrabold text-4xl md:text-6xl text-white leading-tight mb-5">
             Get better answers<br />
             <span className="font-serif italic text-slate-text">from LoopedAI</span>
           </h1>

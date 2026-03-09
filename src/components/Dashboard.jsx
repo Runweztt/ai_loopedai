@@ -150,58 +150,55 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
         onToggle={() => setSidebarOpen((o) => !o)}
       />
 
-      {/* Main chat panel — shifts right on desktop when sidebar open, overlaid on mobile */}
-      <div
-        className={`flex flex-col transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : ''}`}
-        style={{ height: 'calc(100svh - 128px)', minHeight: 'calc(100vh - 160px)' }}
-      >
+      {/* Main chat panel — fills Layout's flex-1 main. Shifts right on desktop when sidebar open. */}
+      <div className={`flex flex-col flex-1 min-h-0 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : ''}`}>
         {/* Header */}
-        <div className="glass rounded-t-3xl px-4 py-3 md:p-5 border-b border-white/5">
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0">
-              <h2 className="text-base md:text-lg font-bold truncate">Immigration Assistant</h2>
-              <p className="text-white/40 text-xs mt-0.5 truncate">
+        <div className="glass rounded-t-2xl md:rounded-t-3xl px-4 py-3 md:p-5 border-b border-white/5 flex-shrink-0">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-sm md:text-lg font-bold truncate">Immigration Assistant</h2>
+              <p className="text-white/40 text-[10px] md:text-xs mt-0.5 truncate">
                 {userData?.country || 'Global'}
                 {!isPremium && (
-                  <span className="ml-2 text-premium-gold">
+                  <span className="ml-2 text-premium-gold font-medium">
                     {Math.max(0, FREE_PROMPT_LIMIT - promptCount)}/{FREE_PROMPT_LIMIT} left
                   </span>
                 )}
-                {isPremium && <span className="ml-2 text-green-400">Premium ✓</span>}
+                {isPremium && <span className="ml-2 text-green-400 font-medium">Premium ✓</span>}
               </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               {loadingSession && (
                 <div className="w-3 h-3 border border-premium-gold/40 border-t-premium-gold rounded-full animate-spin" />
               )}
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse hidden sm:block" />
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse hidden md:block" />
               {userData?.is_admin && (
                 <a
                   href="/admin"
-                  className="text-xs text-premium-gold border border-premium-gold/30 rounded-lg px-2 py-1 hover:bg-premium-gold/10 transition-all"
+                  className="text-[10px] text-premium-gold border border-premium-gold/30 rounded-lg px-2 py-1 hover:bg-premium-gold/10 transition-all font-semibold"
                 >
                   Admin
                 </a>
               )}
               <button
                 onClick={onLogout}
-                className="text-xs text-white/30 hover:text-white/70 transition-all border border-white/10 rounded-lg px-2 md:px-3 py-1"
+                className="text-[10px] text-white/30 hover:text-white/70 transition-all border border-white/10 rounded-lg px-2 md:px-3 py-1 font-medium"
               >
-                Sign out
+                Exit
               </button>
             </div>
           </div>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto glass border-x border-white/5 p-4 md:p-5 space-y-4">
+        <div className="flex-1 overflow-y-auto glass border-x border-white/5 p-4 md:p-6 space-y-4 md:space-y-6 scrollbar-thin">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
-                className={`max-w-[85%] md:max-w-[80%] rounded-2xl px-3 md:px-4 py-3 text-sm leading-relaxed ${
+                className={`max-w-[92%] md:max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
                   msg.role === 'user'
-                    ? 'bg-premium-gold text-premium-dark font-medium rounded-br-md'
-                    : 'bg-white/5 text-white/90 border border-white/5 rounded-bl-md'
+                    ? 'bg-premium-gold text-premium-dark font-medium rounded-br-none shadow-premium-gold/10'
+                    : 'bg-white/5 text-white/90 border border-white/5 rounded-bl-none'
                 }`}
               >
                 {msg.role === 'assistant' && (
@@ -238,29 +235,29 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSend} className="glass rounded-b-3xl border-t border-white/5 p-3 md:p-4">
-          <div className="flex gap-2 md:gap-3">
+        <form onSubmit={handleSend} className="glass rounded-b-2xl md:rounded-b-3xl border-t border-white/5 p-3 md:p-5 flex-shrink-0">
+          <div className="flex gap-2 md:gap-4 items-center">
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about visas, permits, immigration..."
+              placeholder="Message your assistant..."
               disabled={loading}
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 md:px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-premium-gold/50 transition-all disabled:opacity-50"
+              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-premium-gold/50 transition-all disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold px-4 md:px-6 py-3 rounded-xl transition-all shadow-lg shadow-premium-gold/20 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+              className="bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold w-12 h-12 flex items-center justify-center rounded-xl transition-all shadow-lg shadow-premium-gold/20 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
             </button>
           </div>
-          <p className="text-[10px] text-white/20 mt-2 text-center hidden sm:block">
-            Powered by LoopedAI · AI-generated responses may not constitute legal advice
+          <p className="text-[10px] text-white/20 mt-3 text-center uppercase tracking-widest leading-none">
+            AI-generated responses • Research purposes only
           </p>
         </form>
       </div>

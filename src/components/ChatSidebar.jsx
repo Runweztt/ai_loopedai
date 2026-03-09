@@ -63,8 +63,8 @@ const ChatSidebar = ({ userData, activeSessionId, onSelectSession, onNewChat, is
       {/* Sidebar panel */}
       <div
         className={`fixed left-0 top-0 h-full z-30 flex flex-col transition-all duration-300 ease-in-out
-          bg-navy border-r border-white/8
-          ${isOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}
+          bg-navy border-r border-white/8 shadow-2xl
+          ${isOpen ? 'w-[280px] md:w-64 opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 pt-5 pb-3 border-b border-white/5 flex-shrink-0">

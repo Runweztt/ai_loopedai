@@ -58,13 +58,13 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
   const inputClass = "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-premium-gold/50 transition-all text-white placeholder-white/20";
 
   return (
-    <div className="glass rounded-3xl p-8 shadow-2xl">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-2">Create Account</h2>
-        <p className="text-white/50 text-sm">Join the most efficient immigration assistance system.</p>
+    <div className="glass rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-2xl">
+      <div className="mb-5 md:mb-8">
+        <h2 className="text-xl md:text-2xl font-bold mb-2">Create Account</h2>
+        <p className="text-white/50 text-xs md:text-sm">Join the most efficient immigration assistance system.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
         <input 
           type="text" placeholder="Full Name" required 
           className={inputClass}
@@ -84,7 +84,7 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
           value={formData.password}
           onChange={(e) => setFormData({...formData, password: e.target.value})}
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 md:gap-4">
           <input 
             type="text" placeholder="Country" required 
             className={inputClass}
@@ -99,7 +99,7 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
           />
         </div>
 
-        <div className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/5 mt-4">
+        <div className="flex items-center gap-3 p-3.5 md:p-4 bg-white/5 rounded-xl border border-white/5 mt-3 md:mt-4">
           <input 
             type="checkbox" 
             id="tg-link"
@@ -107,23 +107,23 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
             checked={formData.link_telegram}
             onChange={(e) => setFormData({...formData, link_telegram: e.target.checked})}
           />
-          <label htmlFor="tg-link" className="text-sm font-medium cursor-pointer">
+          <label htmlFor="tg-link" className="text-xs md:text-sm font-medium cursor-pointer">
             Enable Telegram Integration
           </label>
         </div>
 
-        {error && <p className="text-red-400 text-xs mt-2 px-1">{error}</p>}
+        {error && <p className="text-red-400 text-[11px] mt-2 px-1 italic">{error}</p>}
 
         <button 
           type="submit" 
           disabled={loading}
-          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mt-6 disabled:opacity-50"
+          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3.5 md:py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mt-4 md:mt-6 disabled:opacity-50"
         >
           {loading ? 'Processing...' : 'Register Now'}
         </button>
       </form>
 
-      <p className="text-center text-white/40 text-sm mt-6">
+      <p className="text-center text-white/40 text-xs md:text-sm mt-6">
         Already have an account?{' '}
         <button
           onClick={onSwitchToLogin}

@@ -49,13 +49,13 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
     'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-premium-gold/50 transition-all text-white placeholder-white/20';
 
   return (
-    <div className="glass rounded-3xl p-8 shadow-2xl">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-2">Sign In</h2>
-        <p className="text-white/50 text-sm">Welcome back. Access your immigration assistant.</p>
+    <div className="glass rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-2xl">
+      <div className="mb-6 md:mb-8">
+        <h2 className="text-xl md:text-2xl font-bold mb-2">Sign In</h2>
+        <p className="text-white/50 text-xs md:text-sm">Welcome back. Access your immigration assistant.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
         <input
           type="email"
           placeholder="Email Address"
@@ -73,18 +73,18 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         />
 
-        {error && <p className="text-red-400 text-xs px-1">{error}</p>}
+        {error && <p className="text-red-400 text-[11px] px-1 italic">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mt-6 disabled:opacity-50"
+          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3.5 md:py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mt-4 md:mt-6 disabled:opacity-50"
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
 
-      <p className="text-center text-white/40 text-sm mt-6">
+      <p className="text-center text-white/40 text-xs md:text-sm mt-6">
         No account?{' '}
         <button
           onClick={onSwitchToRegister}

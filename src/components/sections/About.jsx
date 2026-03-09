@@ -19,11 +19,11 @@ export default function About() {
   const rightRef = useScrollReveal()
 
   return (
-    <section className="py-28 bg-void">
+    <section className="py-16 md:py-28 bg-void">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
 
         {/* Top heading */}
-        <div ref={leftRef} className="max-w-3xl mb-20">
+        <div ref={leftRef} className="max-w-3xl mb-10 md:mb-20">
           <p className="text-xs font-body font-semibold uppercase tracking-[0.2em] text-gold mb-4">About</p>
           <h2 className="font-display font-extrabold text-4xl md:text-5xl text-white leading-tight mb-6">
             Built for the people<br />
