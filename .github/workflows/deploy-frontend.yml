@@ -8,6 +8,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
 
     steps:
       - uses: actions/checkout@v4
@@ -16,6 +19,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -31,9 +35,10 @@ jobs:
           server:           ${{ secrets.FTP_SERVER }}
           username:         ${{ secrets.FTP_USERNAME }}
           password:         ${{ secrets.FTP_PASSWORD }}
-          local-dir:        ./dist/
+          local-dir:        ./frontend/dist/
           server-dir:       /public_html/
-          dangerous-clean-slate: false
+          # Clean slate removes stale files from old deploys
+          dangerous-clean-slate: true
           exclude: |
             **/.git*
             **/.git*/**
