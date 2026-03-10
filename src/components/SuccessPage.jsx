@@ -1,7 +1,8 @@
 import React from 'react';
 
 const SuccessPage = ({ userData, onProceed }) => {
-  const showTelegram = userData?.link_telegram;
+  const showTelegram = !!userData?.link_code;
+  const botUsername = import.meta.env.VITE_TELEGRAM_BOT_USERNAME || 'LoopedAIBot';
 
   return (
     <div className="glass rounded-3xl p-6 md:p-10 shadow-2xl text-center">
@@ -32,9 +33,9 @@ const SuccessPage = ({ userData, onProceed }) => {
           </div>
           
           <div className="mt-6 flex justify-center">
-            <a 
-              href="https://t.me/your_bot_name" 
-              target="_blank" 
+            <a
+              href={`https://t.me/${botUsername}`}
+              target="_blank"
               className="text-premium-gold font-bold flex items-center gap-2 hover:underline"
             >
               Open Telegram Bot

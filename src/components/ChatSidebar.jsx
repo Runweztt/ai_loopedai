@@ -130,6 +130,24 @@ const ChatSidebar = ({ userData, activeSessionId, onSelectSession, onNewChat, is
           })}
         </div>
 
+        {/* Telegram link code — shown until user links their account */}
+        {userData?.telegram_link_code && !userData?.is_telegram_enabled && (
+          <div className="px-3 py-3 border-t border-white/5 flex-shrink-0">
+            <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1.5">Telegram Link Code</p>
+            <div className="bg-black/30 rounded-lg px-3 py-2 font-mono text-sm text-premium-gold border border-white/5 select-all text-center">
+              /link {userData.telegram_link_code}
+            </div>
+            <a
+              href={`https://t.me/${import.meta.env.VITE_TELEGRAM_BOT_USERNAME || 'LoopedAIBot'}`}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-center text-[10px] text-premium-gold/60 hover:text-premium-gold mt-1.5 transition-all"
+            >
+              Open Telegram Bot →
+            </a>
+          </div>
+        )}
+
         {/* Refresh button at bottom */}
         <div className="px-3 py-3 border-t border-white/5 flex-shrink-0">
           <button

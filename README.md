@@ -21,11 +21,11 @@ frontend/
 
 ## Features
 
-- 🎨 **Premium Design** — Dark mode, glassmorphism, gold accents
-- 📝 **Registration** — Name, email, password, country, location
-- 📱 **Telegram Opt-In** — Toggle to enable Telegram, shows link code after signup
-- 🔐 **Supabase Auth** — Secure JWT-based authentication
-- 💬 **Chat Interface** — Ask immigration questions directly (coming soon)
+-  **Premium Design** — Dark mode, glassmorphism, gold accents
+-  **Registration** — Name, email, password, country, location
+-  **Telegram Opt-In** — Toggle to enable Telegram, shows link code after signup
+-  **Supabase Auth** — Secure JWT-based authentication
+-  **Chat Interface** — Ask immigration questions directly (coming soon)
 
 ## Running
 

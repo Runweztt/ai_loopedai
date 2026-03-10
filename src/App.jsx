@@ -54,8 +54,9 @@ function ChatApp() {
   const [authView, setAuthView] = useState('login')
 
   useEffect(() => {
-    if (ready && userData?.access_token) setStep('dashboard')
-  }, [ready, userData])
+    // Only auto-redirect from auth — don't override 'success' step after registration
+    if (ready && userData?.access_token && step === 'auth') setStep('dashboard')
+  }, [ready, userData, step])
 
   const handleLogout = () => { clearUserData(); setStep('auth'); setAuthView('login') }
 
