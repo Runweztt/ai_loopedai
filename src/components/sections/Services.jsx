@@ -80,7 +80,7 @@ export default function Services() {
             <span className="font-serif italic text-gold">stage of your move</span>
           </h2>
           <p className="text-slate-text text-base leading-relaxed">
-            From your first question to your approval — LoopedAI covers every step.
+            From your first question to your approval — loopedai covers every step.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

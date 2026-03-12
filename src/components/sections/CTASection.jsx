@@ -31,7 +31,7 @@ export default function CTASection() {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gold text-void font-body font-semibold text-sm md:text-base px-6 md:px-8 py-3.5 md:py-4 rounded-md hover:bg-gold/90 transition-all duration-200 shadow-gold-glow group"
           >
             <MessageSquare size={16} />
-            Chat with LoopedAI
+            Chat with loopedai
             <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
           </Link>
           <Link

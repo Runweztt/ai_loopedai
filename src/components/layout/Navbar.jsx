@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
+import logo from '../../assets/logo-06.png'
 
 const NAV_LINKS = [
+  { to: '/',         label: 'Home' },
   { to: '/services', label: 'Services' },
   { to: '/guide',    label: 'Guide' },
   { to: '/about',    label: 'About' },
@@ -29,13 +31,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-[72px]">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 select-none group">
-          <div className="w-7 h-7 bg-gold rounded-sm flex items-center justify-center">
-            <span className="font-display font-black text-void text-sm leading-none">L</span>
-          </div>
-          <span className="font-display font-bold text-lg tracking-tight">
-            Looped<span className="text-gold">AI</span>
-          </span>
+        <Link to="/" className="flex items-center select-none group">
+          <div
+            role="img" aria-label="LoopedAI"
+            className="nav-logo"
+            style={{ backgroundImage: `url(${logo})` }}
+          />
         </Link>
 
         {/* Desktop nav */}

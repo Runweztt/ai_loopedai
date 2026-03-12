@@ -52,7 +52,7 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
     <div className="glass rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-2xl">
       <div className="mb-6 md:mb-8">
         <h2 className="text-xl md:text-2xl font-bold mb-2">Sign In</h2>
-        <p className="text-white/50 text-xs md:text-sm">Welcome back. Access your immigration assistant.</p>
+        <p className="text-white/50 text-xs md:text-sm">Welcome back. Access your loopedai assistant.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">

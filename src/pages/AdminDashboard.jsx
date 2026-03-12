@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { API_BASE } from '../constants';
+import logo from '../assets/logo-06.png';
 
 const badge = {
   green:  'px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-500/20 text-green-400',
@@ -80,11 +81,17 @@ const AdminDashboard = ({ userData, onLogout }) => {
       {/* Header */}
       <header className="border-b border-white/8 px-4 md:px-6 py-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-8 h-8 bg-premium-gold rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-[#080808] font-black text-sm">IA</span>
-          </div>
+          <div
+            role="img" aria-label="LoopedAI"
+            style={{
+              width: '156px', height: '40px', flexShrink: 0,
+              backgroundImage: `url(${logo})`,
+              backgroundSize: '218px',
+              backgroundPosition: '-28px -84px',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
           <div className="min-w-0">
-            <h1 className="font-bold text-sm">LoopedAI</h1>
             <p className="text-[10px] text-white/30 uppercase tracking-widest">Super Admin</p>
           </div>
         </div>

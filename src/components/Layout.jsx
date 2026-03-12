@@ -1,4 +1,5 @@
 import React from 'react';
+import logo from '../assets/logo-06.png';
 
 /**
  * Wrapper for auth (login/register/success) and chat pages.
@@ -19,13 +20,17 @@ const Layout = ({ children, isFullWidth }) => {
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <header className="w-full flex-shrink-0 px-4 md:px-8 py-4 md:py-5 flex justify-between items-center max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-premium-gold rounded-xl flex items-center justify-center shadow-lg shadow-premium-gold/20">
-            <span className="text-premium-dark font-bold text-sm leading-none">IA</span>
-          </div>
-          <h1 className="text-base md:text-xl font-bold tracking-tight">
-            Immigration <span className="text-premium-gold">Agent</span>
-          </h1>
+        <div className="flex items-center">
+          <div
+            role="img" aria-label="LoopedAI"
+            style={{
+              width: '195px', height: '50px', flexShrink: 0,
+              backgroundImage: `url(${logo})`,
+              backgroundSize: '272px',
+              backgroundPosition: '-35px -104px',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
         </div>
         <nav className="hidden md:flex gap-8 text-sm font-medium text-white/70">
           <a href="#" className="hover:text-white transition-colors">How it Works</a>
@@ -59,7 +64,17 @@ const Layout = ({ children, isFullWidth }) => {
 
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="flex-shrink-0 w-full py-6 text-center text-white/20 text-[10px] tracking-widest uppercase border-t border-white/5">
-        &copy; 2026 Immigration AI Systems — Secure &amp; Efficient
+        <div
+          role="img" aria-label="LoopedAI"
+          style={{
+            width: '28px', height: '28px', display: 'inline-block', verticalAlign: 'middle', marginRight: '8px', opacity: 0.7,
+            backgroundImage: `url(${logo})`,
+            backgroundSize: '150px',
+            backgroundPosition: '-19px -57px',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+        &copy; 2026 — Secure &amp; Efficient
       </footer>
 
     </div>

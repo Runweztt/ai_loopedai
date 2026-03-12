@@ -56,7 +56,7 @@ export default function Hero() {
       <div className="absolute bottom-[-10%] left-[5%] w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(233,179,8,0.06) 0%, transparent 70%)' }} />
 
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-20 md:pt-32 pb-14 md:pb-24 w-full">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-32 md:pt-36 pb-14 md:pb-24 w-full">
         <div className="max-w-4xl">
 
           {/* Badge */}
@@ -86,7 +86,7 @@ export default function Hero() {
             className="text-base md:text-lg text-slate-text font-body leading-relaxed max-w-2xl mb-10 opacity-0 animate-fade-up"
             style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
           >
-            LoopedAI reads official government portals in real time, builds your exact document checklist, and reviews your files before you submit — so you arrive prepared, not guessing.
+            loopedai reads official government portals in real time, builds your exact document checklist, and reviews your files before you submit — so you arrive prepared, not guessing.
           </p>
 
           {/* CTAs */}

@@ -53,6 +53,25 @@ body {
   background-clip: text;
 }
 
+/* Responsive navbar logo */
+.nav-logo {
+  width: 140px;
+  height: 36px;
+  flex-shrink: 0;
+  background-size: 195px;
+  background-position: -25px -74px;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 768px) {
+  .nav-logo {
+    width: 215px;
+    height: 56px;
+    background-size: 299px;
+    background-position: -38px -114px;
+  }
+}
+
 /* Noise texture overlay */
 .noise::after {
   content: '';

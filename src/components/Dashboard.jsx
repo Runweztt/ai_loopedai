@@ -4,6 +4,7 @@ import ChatSidebar from './ChatSidebar';
 import ReviewDocumentsButton from './ReviewDocumentsButton';
 import DocumentReviewModal from './DocumentReviewModal';
 import { API_BASE } from '../constants';
+import logo from '../assets/logo-06.png';
 
 const FREE_PROMPT_LIMIT = 4;
 const PROMPT_COUNT_KEY = 'immigration_ai_prompt_count';
@@ -11,7 +12,7 @@ const SESSION_KEY = 'loopedai_current_session';
 
 const makeWelcome = (name) => ({
   role: 'assistant',
-  text: `Hello ${name || 'there'}! I'm your Immigration AI Assistant. Ask me anything about visas, permits, immigration policies, or relocation processes. How can I help you today?`,
+  text: `Hello ${name || 'there'}! I'm loopedai. Ask me anything about visas, permits, immigration policies, or relocation processes. How can I help you today?`,
 });
 
 const Dashboard = ({ userData, onLogout, onUpgrade }) => {
@@ -165,8 +166,18 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
         {/* Header */}
         <div className="glass rounded-t-2xl md:rounded-t-3xl px-4 py-3 md:p-5 border-b border-white/5 flex-shrink-0">
           <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0 flex-1">
-              <h2 className="text-sm md:text-lg font-bold truncate">Immigration Assistant</h2>
+            <div className="min-w-0 flex-1 flex items-center gap-2">
+              {/* <div
+                role="img" aria-label="LoopedAI"
+                style={{
+                  width: '174px', height: '44px', flexShrink: 0,
+                  backgroundImage: `url(${logo})`,
+                  backgroundSize: '245px',
+                  backgroundPosition: '-32px -95px',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              /> */}
+              
               <p className="text-white/40 text-[10px] md:text-xs mt-0.5 truncate">
                 {userData?.country || 'Global'}
                 {!isPremium && (
@@ -213,10 +224,16 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
               >
                 {msg.role === 'assistant' && (
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-5 h-5 bg-premium-gold/20 rounded-md flex items-center justify-center flex-shrink-0">
-                      <span className="text-premium-gold text-[10px] font-bold">IA</span>
-                    </div>
-                    <span className="text-[10px] text-white/30 uppercase tracking-widest font-semibold">AI Assistant</span>
+                    <div
+                      role="img" aria-label="LoopedAI"
+                      style={{
+                        width: '34px', height: '34px', flexShrink: 0,
+                        backgroundImage: `url(${logo})`,
+                        backgroundSize: '191px',
+                        backgroundPosition: '-25px -74px',
+                        backgroundRepeat: 'no-repeat',
+                      }}
+                    />
                   </div>
                 )}
                 <p className="whitespace-pre-wrap break-words">{msg.text}</p>
@@ -228,10 +245,16 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
             <div className="flex justify-start">
               <div className="bg-white/5 border border-white/5 rounded-2xl rounded-bl-md px-4 py-3">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-5 h-5 bg-premium-gold/20 rounded-md flex items-center justify-center">
-                    <span className="text-premium-gold text-[10px] font-bold">IA</span>
-                  </div>
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest font-semibold">AI Assistant</span>
+                  <div
+                    role="img" aria-label="LoopedAI"
+                    style={{
+                      width: '34px', height: '34px', flexShrink: 0,
+                      backgroundImage: `url(${logo})`,
+                      backgroundSize: '191px',
+                      backgroundPosition: '-25px -74px',
+                      backgroundRepeat: 'no-repeat',
+                    }}
+                  />
                 </div>
                 <div className="flex gap-1.5">
                   <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />

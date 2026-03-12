@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import logo from '../../assets/logo-06.png'
 
 export default function Footer() {
   return (
@@ -8,13 +9,17 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="flex flex-col items-center md:items-start">
-            <Link to="/" className="flex items-center gap-2 select-none mb-3">
-              <div className="w-7 h-7 bg-gold rounded-sm flex items-center justify-center">
-                <span className="font-display font-black text-void text-xs leading-none">L</span>
-              </div>
-              <span className="font-display font-bold text-lg">
-                Looped<span className="text-gold">AI</span>
-              </span>
+            <Link to="/" className="flex items-center select-none mb-3">
+              <div
+                role="img" aria-label="LoopedAI"
+                style={{
+                  width: '215px', height: '56px', flexShrink: 0,
+                  backgroundImage: `url(${logo})`,
+                  backgroundSize: '299px',
+                  backgroundPosition: '-38px -114px',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              />
             </Link>
             <p className="text-xs text-slate-dim max-w-[280px] md:max-w-[220px] leading-relaxed">
               AI immigration intelligence. Research purposes only — not legal advice.
@@ -43,6 +48,17 @@ export default function Footer() {
         <div className="mt-8 md:mt-10 pt-6 md:pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <p className="text-[11px] text-slate-dim font-medium">© 2026 LoopedAI. All rights reserved.</p>
           <p className="text-[11px] text-slate-dim/60">For informational purposes only. Not legal advice.</p>
+          <p className="text-[11px] text-slate-dim/50">
+            Built and designed by{' '}
+            <a
+              href="https://www.jargscormark.com"
+              target="_blank"
+              rel="noreferrer"
+              className="text-gold/60 hover:text-gold transition-colors"
+            >
+              Jargs Cormark
+            </a>
+          </p>
         </div>
       </div>
     </footer>

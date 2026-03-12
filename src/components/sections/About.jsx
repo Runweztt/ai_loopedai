@@ -30,7 +30,7 @@ export default function About() {
             <span className="font-serif italic text-slate-text">buried in government PDFs</span>
           </h2>
           <p className="text-slate-text text-base leading-relaxed max-w-2xl">
-            Immigration information is scattered across dozens of portals, buried in PDFs, and constantly changing. LoopedAI brings it all together — in real time, for your exact situation.
+            Immigration information is scattered across dozens of portals, buried in PDFs, and constantly changing. loopedai brings it all together — in real time, for your exact situation.
           </p>
         </div>
 
