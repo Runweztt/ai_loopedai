@@ -16,7 +16,9 @@ const STEPS = ['details', 'checklist', 'upload', 'progress', 'report'];
 
 const ACCEPTED_TYPES = '.pdf,.docx,.jpg,.jpeg,.png';
 
-const POLL_INTERVAL_MS = 3000;
+const POLL_INITIAL_MS = 3000;   // first poll after 3 s
+const POLL_MAX_MS     = 30000;  // cap at 30 s between polls
+const POLL_BACKOFF    = 1.6;    // multiply interval each cycle
 
 // ── Sub-components ────────────────────────────────────────────────────
 
@@ -68,6 +70,7 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
   // Step 3/4: file upload
   const [files, setFiles] = useState([]);
   const fileInputRef = useRef(null);
+  const [checklistOpen, setChecklistOpen] = useState(false);
 
   // Step 5: progress
   const [reviewId, setReviewId] = useState(null);
@@ -78,9 +81,9 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
   // Step 6: report
   const [report, setReport] = useState(null);
 
-  // Clean up polling on unmount
+  // Clean up polling timeout on unmount
   useEffect(() => {
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+    return () => { if (pollRef.current) clearTimeout(pollRef.current); };
   }, []);
 
   // ── Step 1 → 2: Fetch checklist ──────────────────────────────────
@@ -152,6 +155,9 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
         body: formData,
       });
 
+      if (res.status === 402) {
+        throw new Error('Premium subscription required to use document review. Contact info@loopedai.io to upgrade.');
+      }
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail || 'Failed to start review');
@@ -167,30 +173,41 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
   };
 
   const startPolling = (id) => {
-    pollRef.current = setInterval(async () => {
+    let interval = POLL_INITIAL_MS;
+
+    const poll = async () => {
       try {
         const res = await fetch(`${API_BASE}/api/visa-review/${id}/status`, {
           headers: userData?.access_token ? { Authorization: `Bearer ${userData.access_token}` } : {},
         });
-        if (!res.ok) return;
-        const data = await res.json();
 
-        setProgress({ percent: data.progress_percent, step: data.current_step });
+        if (res.ok) {
+          const data = await res.json();
+          setProgress({ percent: data.progress_percent, step: data.current_step });
 
-        if (data.status === 'complete' && data.report) {
-          clearInterval(pollRef.current);
-          setReport(data.report);
-          setStep('report');
-          if (onReportReady) onReportReady(data.report, country, visaType);
-        } else if (data.status === 'failed') {
-          clearInterval(pollRef.current);
-          setReviewError(data.error || 'Review failed. Please try again.');
-          setStep('upload');
+          if (data.status === 'complete' && data.report) {
+            setReport(data.report);
+            setStep('report');
+            if (onReportReady) onReportReady(data.report, country, visaType);
+            return; // stop — no next timeout
+          }
+          if (data.status === 'failed') {
+            setReviewError(data.error || 'Review failed. Please try again.');
+            setStep('upload');
+            return; // stop — no next timeout
+          }
         }
       } catch {
         // Silently ignore transient network errors during polling
       }
-    }, POLL_INTERVAL_MS);
+
+      // Backoff: grow interval up to the cap, then schedule next poll
+      interval = Math.min(interval * POLL_BACKOFF, POLL_MAX_MS);
+      pollRef.current = setTimeout(poll, interval);
+    };
+
+    // Kick off the first poll after the initial delay
+    pollRef.current = setTimeout(poll, interval);
   };
 
   // ── Render ────────────────────────────────────────────────────────
@@ -346,6 +363,50 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
             <p className="text-xs text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3">
               Your documents are processed in memory only and permanently deleted after your report is generated. We never store your files.
             </p>
+
+            {/* Collapsible checklist reference */}
+            {checklist && (
+              <div className="border border-white/10 rounded-xl overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setChecklistOpen((o) => !o)}
+                  className="w-full flex items-center justify-between px-4 py-3 text-xs font-semibold text-white/60 hover:text-white/80 hover:bg-white/5 transition-all"
+                >
+                  <span>Required documents for {visaType} — {country}</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-4 w-4 transition-transform duration-200 ${checklistOpen ? 'rotate-180' : ''}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {checklistOpen && (
+                  <div className="px-4 pb-3 space-y-2 border-t border-white/5">
+                    {checklist.required?.length > 0 && (
+                      <ul className="space-y-1 pt-2">
+                        {checklist.required.map((item, i) => (
+                          <li key={i} className="flex gap-2 text-xs text-white/70">
+                            <span className="text-green-400 flex-shrink-0">&#10003;</span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {checklist.conditional?.length > 0 && (
+                      <ul className="space-y-1">
+                        {checklist.conditional.map((item, i) => (
+                          <li key={i} className="flex gap-2 text-xs text-white/50">
+                            <span className="text-yellow-400 flex-shrink-0">&#9888;</span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Drop zone */}
             <div

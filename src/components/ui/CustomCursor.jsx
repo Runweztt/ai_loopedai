@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react'
 
 export default function CustomCursor() {
-  const dotRef  = useRef(null)
-  const ringRef = useRef(null)
-  const pos     = useRef({ x: 0, y: 0 })
-  const mouse   = useRef({ x: 0, y: 0 })
-  const raf     = useRef(null)
+  const dotRef    = useRef(null)
+  const ringRef   = useRef(null)
+  const pos       = useRef({ x: 0, y: 0 })
+  const mouse     = useRef({ x: 0, y: 0 })
+  const raf       = useRef(null)
+  const visible   = useRef(false)
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) return
@@ -15,6 +16,12 @@ export default function CustomCursor() {
       if (dotRef.current) {
         dotRef.current.style.left = e.clientX + 'px'
         dotRef.current.style.top  = e.clientY + 'px'
+      }
+      // Reveal both elements on first mouse move so they don't flash at (0,0)
+      if (!visible.current) {
+        visible.current = true
+        if (dotRef.current)  dotRef.current.style.opacity  = '1'
+        if (ringRef.current) ringRef.current.style.opacity = '1'
       }
     }
 
@@ -56,8 +63,17 @@ export default function CustomCursor() {
 
   return (
     <>
-      <div ref={dotRef}  className="fixed z-[9999] w-2 h-2 bg-gold rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2 transition-transform duration-150" />
-      <div ref={ringRef} className="fixed z-[9998] w-9 h-9 border border-gold/50 rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2 transition-transform duration-150" />
+      {/* Start invisible — revealed on first mousemove so they don't flash at (0,0) */}
+      <div
+        ref={dotRef}
+        style={{ opacity: 0, transition: 'opacity 0.15s, transform 0.15s' }}
+        className="fixed z-[9999] w-2.5 h-2.5 bg-gold rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2"
+      />
+      <div
+        ref={ringRef}
+        style={{ opacity: 0, transition: 'opacity 0.15s, transform 0.15s' }}
+        className="fixed z-[9998] w-8 h-8 border-2 border-gold/60 rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2"
+      />
     </>
   )
 }

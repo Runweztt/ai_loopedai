@@ -1,140 +1,93 @@
 import React, { useState } from 'react';
 import { API_BASE } from '../constants';
 
-const PaymentPage = ({ userData, onPaymentSuccess, onBack }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiry, setExpiry] = useState('');
-  const [cvc, setCvc] = useState('');
+const PaymentPage = ({ onBack, userData }) => {
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
 
-
-  const handlePayment = async (e) => {
-    e.preventDefault();
+  const handleCheckout = async () => {
     setLoading(true);
     setError('');
-
     try {
-      const token = userData?.access_token;
-      if (!token) {
-        setError('Session expired. Please log in again.');
-        setLoading(false);
-        return;
-      }
-
-      // FIX: Call payment endpoint with Bearer token
-      const res = await fetch(`${API_BASE}/api/v1/payment/process`, {
+      const res = await fetch(`${API_BASE}/api/v1/stripe/create-checkout-session`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ plan: 'premium' }),
+        headers: { Authorization: `Bearer ${userData?.access_token}` },
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        onPaymentSuccess({
-          ...userData,
-          looped_id: data.looped_id,
-          is_premium: true,
-        });
-      } else {
-        const err = await res.json();
-        setError(err.detail || 'Payment failed. Please try again.');
-      }
-    } catch {
-      setError('Cannot connect to payment server. Please try again.');
-    } finally {
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Could not start checkout.');
+      // Redirect to Stripe-hosted checkout page — we never handle card data
+      window.location.href = data.checkout_url;
+    } catch (err) {
+      setError(err.message);
       setLoading(false);
     }
   };
 
-  const inputClass =
-    'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-premium-gold/50 transition-all text-white placeholder-white/20';
-
   return (
-    <div className="glass rounded-3xl p-8 shadow-2xl max-w-md mx-auto">
+    <div className="glass rounded-3xl p-8 shadow-2xl max-w-md mx-auto text-center">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="mb-8">
         <div className="w-16 h-16 bg-premium-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-premium-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
           </svg>
         </div>
         <h2 className="text-2xl font-bold mb-2">Upgrade to Premium</h2>
-        <p className="text-white/50 text-sm">Unlimited queries • All platforms • Priority support</p>
+        <p className="text-white/50 text-sm">
+          Secure checkout powered by Stripe — we never store your card details.
+        </p>
       </div>
 
-      {/* Price */}
-      <div className="bg-white/5 rounded-2xl p-5 mb-6 text-center border border-white/5">
-        <div className="text-4xl font-bold text-premium-gold mb-1">$9.99<span className="text-lg text-white/40 font-normal">/mo</span></div>
-        <p className="text-white/30 text-xs">Cancel anytime • Instant activation</p>
+      {/* What you get */}
+      <div className="bg-white/5 rounded-2xl p-5 mb-6 text-left space-y-3 border border-white/5">
+        <p className="text-xs text-white/40 uppercase tracking-wider mb-3">Premium includes</p>
+        {[
+          'Unlimited immigration queries',
+          'Telegram bot integration',
+          'Priority AI responses',
+          'Visa document review (5-agent AI)',
+          'Unique LoopedAI ID across all platforms',
+        ].map((item) => (
+          <div key={item} className="flex items-center gap-3 text-sm">
+            <span className="text-premium-gold">✓</span>
+            <span className="text-white/80">{item}</span>
+          </div>
+        ))}
       </div>
 
-      {/* Payment Form */}
-      <form onSubmit={handlePayment} className="space-y-4">
-        <div>
-          <label className="text-xs text-white/40 mb-1 block">Card Number</label>
-          <input
-            type="text"
-            placeholder="4242 4242 4242 4242"
-            required
-            className={inputClass}
-            value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value)}
-            maxLength={19}
-          />
+      {/* Error */}
+      {error && (
+        <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          {error}
         </div>
+      )}
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-xs text-white/40 mb-1 block">Expiry</label>
-            <input
-              type="text"
-              placeholder="MM/YY"
-              required
-              className={inputClass}
-              value={expiry}
-              onChange={(e) => setExpiry(e.target.value)}
-              maxLength={5}
-            />
-          </div>
-          <div>
-            <label className="text-xs text-white/40 mb-1 block">CVC</label>
-            <input
-              type="text"
-              placeholder="123"
-              required
-              className={inputClass}
-              value={cvc}
-              onChange={(e) => setCvc(e.target.value)}
-              maxLength={4}
-            />
-          </div>
-        </div>
+      {/* Stripe checkout button */}
+      <button
+        onClick={handleCheckout}
+        disabled={loading}
+        className="w-full bg-premium-gold hover:bg-yellow-500 disabled:opacity-50 text-premium-dark font-bold py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mb-4 flex items-center justify-center gap-2"
+      >
+        {loading ? (
+          <>
+            <div className="w-4 h-4 border-2 border-premium-dark/30 border-t-premium-dark rounded-full animate-spin" />
+            Redirecting to Stripe…
+          </>
+        ) : (
+          'Subscribe — £9.99 / month'
+        )}
+      </button>
 
-        {error && <p className="text-red-400 text-xs px-1">{error}</p>}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mt-4 disabled:opacity-50"
-        >
-          {loading ? 'Processing payment...' : 'Pay $9.99 & Activate'}
-        </button>
-      </form>
+      <p className="text-white/25 text-xs mb-4">
+        You will be taken to Stripe's secure payment page.
+      </p>
 
       <button
         onClick={onBack}
-        className="w-full text-center text-white/30 hover:text-white/60 text-sm mt-4 transition-all"
+        className="w-full text-center text-white/30 hover:text-white/60 text-sm transition-all"
       >
         ← Back to chat
       </button>
-
-      <p className="text-center text-white/15 text-[10px] mt-4">
-        🔒 Payments are processed securely. Your card details are encrypted.
-      </p>
     </div>
   );
 };

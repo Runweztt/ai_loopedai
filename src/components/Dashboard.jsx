@@ -119,6 +119,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
       });
 
       if (res.status === 401) { onLogout(); return; }
+      if (res.status === 402) { setShowPaywall(true); return; }
 
       if (res.ok) {
         const data = await res.json();
@@ -143,7 +144,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
 
   return (
     <>
-      {showPaywall && <PaywallModal promptsUsed={promptCount} onUpgrade={onUpgrade} />}
+      {showPaywall && <PaywallModal promptsUsed={promptCount} onUpgrade={onUpgrade} onDismiss={() => setShowPaywall(false)} />}
       {showReviewModal && (
         <DocumentReviewModal
           userData={userData}
@@ -269,12 +270,14 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
 
         {/* Input */}
         <form onSubmit={handleSend} className="glass rounded-b-2xl md:rounded-b-3xl border-t border-white/5 p-3 md:p-5 flex-shrink-0">
-          <div className="flex gap-2 md:gap-3 items-center mb-2">
-            <ReviewDocumentsButton
-              onClick={() => setShowReviewModal(true)}
-              disabled={loading}
-            />
-          </div>
+          {isPremium && (
+            <div className="flex gap-2 md:gap-3 items-center mb-2">
+              <ReviewDocumentsButton
+                onClick={() => setShowReviewModal(true)}
+                disabled={loading}
+              />
+            </div>
+          )}
           <div className="flex gap-2 md:gap-4 items-center">
             <input
               ref={inputRef}

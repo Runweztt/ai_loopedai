@@ -19,18 +19,21 @@ const Layout = ({ children, isFullWidth }) => {
     <div className="min-h-screen vibrant-gradient flex flex-col w-full overflow-x-hidden">
 
       {/* ── Header ─────────────────────────────────────────────── */}
-      <header className="w-full flex-shrink-0 px-4 md:px-8 py-4 md:py-5 flex justify-between items-center max-w-7xl mx-auto">
+      <header className="relative z-40 w-full flex-shrink-0 px-4 md:px-8 py-4 md:py-5 flex justify-between items-center max-w-7xl mx-auto">
         <div className="flex items-center">
-          <div
-            role="img" aria-label="LoopedAI"
-            style={{
-              width: '195px', height: '50px', flexShrink: 0,
-              backgroundImage: `url(${logo})`,
-              backgroundSize: '272px',
-              backgroundPosition: '-35px -104px',
-              backgroundRepeat: 'no-repeat',
-            }}
-          />
+          <a href="/" aria-label="Go to home">
+            <div
+              role="img" aria-label="LoopedAI"
+              style={{
+                width: '195px', height: '50px', flexShrink: 0,
+                backgroundImage: `url(${logo})`,
+                backgroundSize: '272px',
+                backgroundPosition: '-35px -104px',
+                backgroundRepeat: 'no-repeat',
+                cursor: 'pointer',
+              }}
+            />
+          </a>
         </div>
         <nav className="hidden md:flex gap-8 text-sm font-medium text-white/70">
           <a href="#" className="hover:text-white transition-colors">How it Works</a>

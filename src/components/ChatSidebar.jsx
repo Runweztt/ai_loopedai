@@ -46,11 +46,11 @@ const ChatSidebar = ({ userData, activeSessionId, onSelectSession, onNewChat, is
 
   return (
     <>
-      {/* Toggle button — always visible */}
+      {/* Toggle button — always visible, sits below the header (top-[78px]) */}
       <button
         onClick={onToggle}
         title={isOpen ? 'Close history' : 'Open chat history'}
-        className="fixed left-0 top-[40%] -translate-y-1/2 z-40 bg-white/5 border border-white/10 border-l-0 rounded-r-xl px-1.5 py-4 hover:bg-white/10 transition-all"
+        className="fixed left-0 top-[78px] z-39 bg-white/5 border border-white/10 border-l-0 rounded-r-xl px-1.5 py-4 hover:bg-white/10 transition-all"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -61,9 +61,9 @@ const ChatSidebar = ({ userData, activeSessionId, onSelectSession, onNewChat, is
         </svg>
       </button>
 
-      {/* Sidebar panel */}
+      {/* Sidebar panel — starts below the Layout header (top-[73px]) so the logo is never covered */}
       <div
-        className={`fixed left-0 top-0 h-full z-30 flex flex-col transition-all duration-300 ease-in-out
+        className={`fixed left-0 top-[73px] h-[calc(100%-73px)] z-30 flex flex-col transition-all duration-300 ease-in-out
           bg-navy border-r border-white/8 shadow-2xl
           ${isOpen ? 'w-[280px] md:w-64 opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}
       >
@@ -138,8 +138,8 @@ const ChatSidebar = ({ userData, activeSessionId, onSelectSession, onNewChat, is
           })}
         </div>
 
-        {/* Telegram link code — shown until user links their account */}
-        {userData?.telegram_link_code && !userData?.is_telegram_enabled && (
+        {/* Telegram link code — premium only, shown until user links their account */}
+        {userData?.is_premium && userData?.telegram_link_code && !userData?.is_telegram_enabled && (
           <div className="px-3 py-3 border-t border-white/5 flex-shrink-0">
             <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1.5">Telegram Link Code</p>
             <div className="bg-black/30 rounded-lg px-3 py-2 font-mono text-sm text-premium-gold border border-white/5 select-all text-center">

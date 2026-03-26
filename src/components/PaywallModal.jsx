@@ -1,10 +1,21 @@
 import React from 'react';
 
-const PaywallModal = ({ promptsUsed, onUpgrade }) => {
+const PaywallModal = ({ promptsUsed, onUpgrade, onDismiss }) => {
   return (
-    /* FIX: Non-dismissible paywall modal — no close button, no backdrop click dismiss */
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.85)' }}>
-      <div className="glass rounded-3xl p-10 max-w-md w-full mx-4 shadow-2xl border border-white/10 text-center">
+      <div className="relative glass rounded-3xl p-10 max-w-md w-full mx-4 shadow-2xl border border-white/10 text-center">
+        {/* Close button */}
+        {onDismiss && (
+          <button
+            onClick={onDismiss}
+            className="absolute top-4 right-4 text-white/30 hover:text-white/70 transition-all"
+            aria-label="Close"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
         {/* Lock Icon */}
         <div className="w-20 h-20 bg-premium-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-premium-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -48,7 +59,7 @@ const PaywallModal = ({ promptsUsed, onUpgrade }) => {
         </button>
 
         <p className="text-white/20 text-xs mt-4">
-          Secure payment • Instant access • Cancel anytime
+          Contact us to unlock Premium access
         </p>
       </div>
     </div>
