@@ -3,6 +3,7 @@ import PaywallModal from './PaywallModal';
 import ChatSidebar from './ChatSidebar';
 import ReviewDocumentsButton from './ReviewDocumentsButton';
 import DocumentReviewModal from './DocumentReviewModal';
+import ReviewReportCard from './ReviewReportCard';
 import { API_BASE } from '../constants';
 import logo from '../assets/logo-06.png';
 
@@ -149,7 +150,14 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
         <DocumentReviewModal
           userData={userData}
           onClose={() => setShowReviewModal(false)}
-          onReportReady={() => setShowReviewModal(false)}
+          onReportReady={(report, country, visaType) => {
+            // Inject the report as a persistent chat message — DO NOT close the modal here.
+            // The modal stays open so the user can read it; "Done" button calls onClose.
+            setMessages((prev) => [
+              ...prev,
+              { role: 'assistant', type: 'review', report, country, visaType, text: '' },
+            ]);
+          }}
         />
       )}
 
@@ -237,7 +245,10 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
                     />
                   </div>
                 )}
-                <p className="whitespace-pre-wrap break-words">{msg.text}</p>
+                {msg.type === 'review'
+                  ? <ReviewReportCard report={msg.report} country={msg.country} visaType={msg.visaType} />
+                  : <p className="whitespace-pre-wrap break-words">{msg.text}</p>
+                }
               </div>
             </div>
           ))}
