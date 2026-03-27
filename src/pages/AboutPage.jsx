@@ -62,19 +62,19 @@ export default function AboutPage() {
     <div className="pt-16 bg-void min-h-screen">
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <section className="py-24 md:py-32 relative overflow-hidden">
+      <section className="py-24 md:py-32 relative overflow-hidden flex items-center justify-center">
         {/* Subtle radial glow */}
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(212,175,55,0.06) 0%, transparent 70%)' }} />
-        <div className="max-w-4xl mx-auto px-6 lg:px-10 text-center relative">
-          <span className="inline-block text-[10px] font-bold uppercase tracking-[0.25em] text-gold border border-gold/20 rounded-full px-4 py-1.5 mb-6">
+        <div className="max-w-4xl w-full mx-auto px-6 lg:px-10 flex flex-col items-center text-center relative">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold border border-gold/20 rounded-full px-4 py-1.5 mb-6">
             Our Mission
           </span>
-          <h1 className="font-display font-extrabold text-5xl md:text-7xl text-white leading-[1.08] mb-7">
-            Immigration intelligence<br />
+          <h1 className="font-display font-extrabold text-4xl sm:text-5xl md:text-7xl text-white leading-[1.08] mb-7">
+            Immigration intelligence{' '}
             <span className="font-serif italic text-slate-400">built for real people</span>
           </h1>
-          <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
+          <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-2xl">
             Immigration information is scattered across dozens of portals, buried in PDFs,
             and constantly changing. LoopedAI brings it all together — in real time,
             for your exact situation — so you walk in prepared, not confused.
