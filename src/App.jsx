@@ -76,18 +76,29 @@ function ChatApp() {
       window.history.replaceState({}, '', window.location.pathname)
     }
 
-    // Detect Google OAuth callback — Supabase puts the session in the URL hash
+    // Detect Google OAuth callback — Supabase v2 PKCE flow exchanges the ?code= param
+    // asynchronously after createClient(). getSession() called immediately returns null
+    // before the exchange completes, so we listen via onAuthStateChange first.
     if (params.get('oauth') === 'true') {
       window.history.replaceState({}, '', window.location.pathname)
       setOauthLoading(true)
-      supabase.auth.getSession().then(async ({ data: { session } }) => {
+
+      let handled = false
+      let timeoutId = null
+      let subscription = null
+
+      const completeOAuth = async (session) => {
+        if (handled) return
+        handled = true
+        clearTimeout(timeoutId)
+        subscription?.unsubscribe()
+
         if (!session?.access_token) {
-          setOauthError('Google sign-in failed. Please try again.')
+          setOauthError('Google sign-in failed — no session returned. Please try again.')
           setOauthLoading(false)
           return
         }
         try {
-          // Exchange the Supabase token for a LoopedAI profile (creates one if new user)
           const res = await fetch(`${API_BASE}/api/v1/auth/oauth/session`, {
             method: 'POST',
             headers: {
@@ -96,8 +107,8 @@ function ChatApp() {
             },
           })
           if (!res.ok) {
-            const err = await res.json()
-            throw new Error(err.detail || 'Sign-in failed.')
+            const body = await res.json().catch(() => ({}))
+            throw new Error(body.detail || `Backend error ${res.status}`)
           }
           const data = await res.json()
           setUserData({
@@ -117,7 +128,28 @@ function ChatApp() {
         } finally {
           setOauthLoading(false)
         }
+      }
+
+      // Primary: wait for PKCE code exchange to complete (fires SIGNED_IN when ready)
+      const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN') completeOAuth(session)
       })
+      subscription = listener.subscription
+
+      // Fallback: session already in storage (returning user, tab refresh)
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.access_token) completeOAuth(session)
+      })
+
+      // Safety timeout — unblock UI if Supabase never responds
+      timeoutId = setTimeout(() => {
+        if (!handled) {
+          handled = true
+          subscription?.unsubscribe()
+          setOauthError('Sign-in timed out. Please try again.')
+          setOauthLoading(false)
+        }
+      }, 15000)
     }
   }, [])
 
