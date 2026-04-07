@@ -34,23 +34,7 @@ npm install
 npm run dev
 ```
 
-The dev server runs on `http://localhost:3000` with API requests proxied to `http://localhost:8000`.
 
-## API Proxy
-
-The Vite config proxies `/api` requests to the backend:
-
-```js
-server: {
-  port: 3000,
-  proxy: {
-    '/api': {
-      target: 'http://localhost:8000',
-      changeOrigin: true,
-    }
-  }
-}
-```
 
 ## Design System
 
