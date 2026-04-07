@@ -15,6 +15,7 @@ import { API_BASE } from '../constants';
 const STEPS = ['details', 'checklist', 'upload', 'progress', 'report'];
 
 const ACCEPTED_TYPES = '.pdf,.docx,.jpg,.jpeg,.png';
+const MAX_FILES = 10;
 
 const POLL_INITIAL_MS = 3000;   // first poll after 3 s
 const POLL_MAX_MS     = 30000;  // cap at 30 s between polls
@@ -115,13 +116,16 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
 
   const handleFilesSelected = useCallback((selectedFiles) => {
     const arr = Array.from(selectedFiles);
-    const valid = arr.filter((f) => {
-      const ok = /\.(pdf|docx|jpg|jpeg|png)$/i.test(f.name);
-      return ok;
-    });
+    const valid = arr.filter((f) => /\.(pdf|docx|jpg|jpeg|png)$/i.test(f.name));
     setFiles((prev) => {
       const names = new Set(prev.map((f) => f.name));
-      return [...prev, ...valid.filter((f) => !names.has(f.name))];
+      const merged = [...prev, ...valid.filter((f) => !names.has(f.name))];
+      if (merged.length > MAX_FILES) {
+        setReviewError(`Maximum ${MAX_FILES} files per review. Extra files were not added.`);
+        return merged.slice(0, MAX_FILES);
+      }
+      setReviewError('');
+      return merged;
     });
   }, []);
 
@@ -357,7 +361,7 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
         <>
           <ModalHeader
             title="Upload Your Documents"
-            subtitle="PDF, DOCX, JPG, PNG accepted. Max 10MB per file."
+            subtitle="PDF, DOCX, JPG, PNG accepted. Up to 10 files, max 10MB each."
           />
           <div className="px-6 py-4 overflow-y-auto flex-1 space-y-4">
             <p className="text-xs text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3">
@@ -472,7 +476,7 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
         <>
           <ModalHeader
             title="Reviewing Your Documents..."
-            subtitle="Our loopedai agents are analyzing your application. This takes 1-2 minutes."
+            subtitle="Our AI agents are analyzing your application. This typically takes 2–4 minutes."
           />
           <div className="px-6 py-8 flex flex-col items-center gap-6">
             {/* Progress bar */}
@@ -488,6 +492,11 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
                 />
               </div>
             </div>
+            {progress.percent > 0 && progress.percent < 100 && (
+              <p className="text-xs text-white/30 text-center">
+                Please keep this window open — closing it will not cancel the review, but you will need to refresh to see results.
+              </p>
+            )}
 
             {/* Agent steps */}
             {[
@@ -518,17 +527,19 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
       {/* ── STEP: report ── */}
       {step === 'report' && report && (
         <>
-          <ModalHeader
-            title="Review Complete"
-            subtitle={`${visaType} — ${country}`}
-          />
-          <div className="px-4 py-4 overflow-y-auto flex-1">
+          <div className="p-4 overflow-y-auto flex-1">
             <ReviewReportCard report={report} country={country} visaType={visaType} />
           </div>
-          <div className="px-6 pb-5 pt-2 flex gap-3">
+          <div className="px-4 pb-4 pt-2 flex gap-3">
+            <button
+              onClick={() => { setStep('upload'); setFiles([]); setReport(''); }}
+              className="flex-1 bg-white/5 hover:bg-white/10 text-white/60 font-semibold py-2.5 rounded-xl transition-all text-sm border border-white/10"
+            >
+              New Review
+            </button>
             <button
               onClick={onClose}
-              className="flex-1 bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3 rounded-xl transition-all text-sm"
+              className="flex-1 bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-2.5 rounded-xl transition-all text-sm"
             >
               Done
             </button>
