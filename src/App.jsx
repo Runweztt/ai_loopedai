@@ -11,6 +11,8 @@ import AboutPage      from './pages/AboutPage'
 import ServicesPage   from './pages/ServicesPage'
 import GuidePage      from './pages/GuidePage'
 import AdminDashboard from './pages/AdminDashboard'
+import SafetyPage    from './pages/SafetyPage'
+import PrivacyPage   from './pages/PrivacyPage'
 
 import RegistrationForm    from './components/RegistrationForm'
 import LoginForm           from './components/LoginForm'
@@ -49,6 +51,26 @@ function useSession() {
   }
 
   return { userData, setUserData: save, clearUserData: clear, ready }
+}
+
+/* Wraps each step with a fade+slide animation keyed to the step name,
+   so switching steps always plays the entrance animation.
+   fullHeight=true adds flex-1 + min-h-0 so the dashboard fills its container.
+   The dashboard also gets opacity-only animation (no translateY) to avoid
+   creating a CSS transform containing-block that would break position:fixed
+   on child modals. */
+function StepTransition({ stepKey, children, fullHeight = false }) {
+  return (
+    <div
+      key={stepKey}
+      className={[
+        fullHeight ? 'animate-fade-in flex-1 flex flex-col min-h-0' : 'animate-fade-slide-up',
+        'w-full',
+      ].join(' ')}
+    >
+      {children}
+    </div>
+  )
 }
 
 function ChatApp() {
@@ -183,56 +205,73 @@ function ChatApp() {
 
   const handleLogout = () => { clearUserData(); setStep('auth'); setAuthView('login') }
 
+  // Don't render anything until localStorage has been read — prevents the
+  // login form flashing briefly before the session redirects to dashboard.
+  if (!ready) {
+    return (
+      <Layout isFullWidth={false}>
+        <div className="flex items-center justify-center py-20">
+          <div className="w-6 h-6 border-2 border-white/10 border-t-white/40 rounded-full animate-spin" />
+        </div>
+      </Layout>
+    )
+  }
+
+  // Unique key drives the StepTransition re-mount animation each time step changes.
+  const transitionKey = oauthLoading ? 'oauth-loading' : step === 'auth' ? `auth-${authView}` : step
+
   return (
     <Layout isFullWidth={step === 'dashboard'}>
-      {oauthLoading && (
-        <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <div className="w-8 h-8 border-2 border-premium-gold/30 border-t-premium-gold rounded-full animate-spin" />
-          <p className="text-white/50 text-sm">Signing you in with Google...</p>
-        </div>
-      )}
-      {!oauthLoading && step === 'auth' && authView === 'login' && (
-        <>
-          {emailConfirmed && (
-            <div className="mb-4 px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
-              Email confirmed! You can now sign in.
-            </div>
-          )}
-          {oauthError && (
-            <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
-              {oauthError}
-            </div>
-          )}
-          <LoginForm
-            onSuccess={(data) => { setUserData(data); setStep('dashboard') }}
-            onSwitchToRegister={() => { setEmailConfirmed(false); setOauthError(''); setAuthView('register') }}
+      <StepTransition stepKey={transitionKey} fullHeight={step === 'dashboard'}>
+        {oauthLoading && (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="w-8 h-8 border-2 border-premium-gold/30 border-t-premium-gold rounded-full animate-spin" />
+            <p className="text-white/50 text-sm">Signing you in with Google...</p>
+          </div>
+        )}
+        {!oauthLoading && step === 'auth' && authView === 'login' && (
+          <>
+            {emailConfirmed && (
+              <div className="mb-4 px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
+                Email confirmed! You can now sign in.
+              </div>
+            )}
+            {oauthError && (
+              <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
+                {oauthError}
+              </div>
+            )}
+            <LoginForm
+              onSuccess={(data) => { setUserData(data); setStep('dashboard') }}
+              onSwitchToRegister={() => { setEmailConfirmed(false); setOauthError(''); setAuthView('register') }}
+            />
+          </>
+        )}
+        {!oauthLoading && step === 'auth' && authView === 'register' && (
+          <RegistrationForm
+            onSafeSuccess={(data) => { setUserData(data); setStep('success') }}
+            onSwitchToLogin={() => setAuthView('login')}
           />
-        </>
-      )}
-      {!oauthLoading && step === 'auth' && authView === 'register' && (
-        <RegistrationForm
-          onSafeSuccess={(data) => { setUserData(data); setStep('success') }}
-          onSwitchToLogin={() => setAuthView('login')}
-        />
-      )}
-      {step === 'success' && (
-        <SuccessPage userData={userData} onProceed={() => setStep('dashboard')} />
-      )}
-      {step === 'premium-success' && (
-        <PremiumSuccessCard
-          userData={userData}
-          onContinue={() => { setPaymentSuccess(false); setStep('dashboard') }}
-        />
-      )}
-      {step === 'dashboard' && (
-        <Dashboard userData={userData} onLogout={handleLogout} onUpgrade={() => setStep('payment')} />
-      )}
-      {step === 'payment' && (
-        <PaymentPage
-          userData={userData}
-          onBack={() => setStep('dashboard')}
-        />
-      )}
+        )}
+        {step === 'success' && (
+          <SuccessPage userData={userData} onProceed={() => setStep('dashboard')} />
+        )}
+        {step === 'premium-success' && (
+          <PremiumSuccessCard
+            userData={userData}
+            onContinue={() => { setPaymentSuccess(false); setStep('dashboard') }}
+          />
+        )}
+        {step === 'dashboard' && (
+          <Dashboard userData={userData} onLogout={handleLogout} onUpgrade={() => setStep('payment')} />
+        )}
+        {step === 'payment' && (
+          <PaymentPage
+            userData={userData}
+            onBack={() => setStep('dashboard')}
+          />
+        )}
+      </StepTransition>
     </Layout>
   )
 }
@@ -243,23 +282,31 @@ function AdminApp() {
 
   const handleLogout = () => { clearUserData() }
 
-  if (!ready) return null
+  if (!ready) return (
+    <Layout isFullWidth={false}>
+      <div className="flex items-center justify-center py-20">
+        <div className="w-6 h-6 border-2 border-white/10 border-t-white/40 rounded-full animate-spin" />
+      </div>
+    </Layout>
+  )
 
   // Not logged in — show login/register inline at /admin
   if (!userData?.access_token) {
     return (
       <Layout isFullWidth={false}>
-        {authView === 'login' ? (
-          <LoginForm
-            onSuccess={(data) => setUserData(data)}
-            onSwitchToRegister={() => setAuthView('register')}
-          />
-        ) : (
-          <RegistrationForm
-            onSafeSuccess={(data) => setUserData(data)}
-            onSwitchToLogin={() => setAuthView('login')}
-          />
-        )}
+        <StepTransition stepKey={`admin-${authView}`}>
+          {authView === 'login' ? (
+            <LoginForm
+              onSuccess={(data) => setUserData(data)}
+              onSwitchToRegister={() => setAuthView('register')}
+            />
+          ) : (
+            <RegistrationForm
+              onSafeSuccess={(data) => setUserData(data)}
+              onSwitchToLogin={() => setAuthView('login')}
+            />
+          )}
+        </StepTransition>
       </Layout>
     )
   }
@@ -283,6 +330,8 @@ function MarketingLayout() {
           <Route path="/about"    element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/guide"    element={<GuidePage />} />
+          <Route path="/safety"   element={<SafetyPage />} />
+          <Route path="/privacy"  element={<PrivacyPage />} />
         </Routes>
       </main>
       <Footer />

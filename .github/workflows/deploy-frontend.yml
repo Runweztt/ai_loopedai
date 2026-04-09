@@ -8,9 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
+    # No working-directory override — the frontend repo root IS the working dir
 
     steps:
       - uses: actions/checkout@v4
@@ -19,10 +17,11 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          # package-lock.json is at the repo root (this is the frontend repo)
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --prefer-offline
 
       - name: Build
         run: npm run build
@@ -32,13 +31,15 @@ jobs:
       - name: Deploy to Hostinger FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server:           ${{ secrets.FTP_SERVER }}
-          username:         ${{ secrets.FTP_USERNAME }}
-          password:         ${{ secrets.FTP_PASSWORD }}
-          local-dir:        ./frontend/dist/
-          server-dir:       /public_html/
-          # Clean slate removes stale files from old deploys
-          dangerous-clean-slate: true
+          server:     ${{ secrets.FTP_SERVER }}
+          username:   ${{ secrets.FTP_USERNAME }}
+          password:   ${{ secrets.FTP_PASSWORD }}
+          local-dir:  ./dist/
+          server-dir: ${{ secrets.FTP_SERVER_DIR || '/public_html/' }}
+          # dangerous-clean-slate: false keeps files that weren't part of this
+          # build (e.g. .htaccess, uploaded media) — set to true only if you
+          # want a full wipe of the remote dir on every deploy
+          dangerous-clean-slate: false
           exclude: |
             **/.git*
             **/.git*/**

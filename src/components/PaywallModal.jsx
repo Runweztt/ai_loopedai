@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const PaywallModal = ({ promptsUsed, onUpgrade, onDismiss }) => {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.85)' }}>
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
+      style={{ backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)' }}
+      onClick={(e) => { if (e.target === e.currentTarget && onDismiss) onDismiss(); }}
+    >
       <div className="relative glass rounded-3xl p-10 max-w-md w-full mx-4 shadow-2xl border border-white/10 text-center">
         {/* Close button */}
         {onDismiss && (
@@ -62,7 +73,8 @@ const PaywallModal = ({ promptsUsed, onUpgrade, onDismiss }) => {
           Contact us to unlock Premium access
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

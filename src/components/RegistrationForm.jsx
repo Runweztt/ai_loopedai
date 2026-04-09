@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { API_BASE } from '../constants';
 import { signInWithGoogle } from '../lib/supabase';
 
@@ -61,6 +62,7 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
   const [countryOpen, setCountryOpen] = useState(false);
+  const [agreedToPolicy, setAgreedToPolicy] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [emailSent, setEmailSent] = useState(false);
@@ -77,6 +79,10 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!agreedToPolicy) {
+      setError('Please agree to the Privacy Policy to continue.');
+      return;
+    }
     setLoading(true);
     setError('');
 
@@ -276,14 +282,50 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
           onChange={(e) => setFormData({ ...formData, location: e.target.value })}
         />
 
-        {error && <p className="text-red-400 text-[11px] mt-2 px-1 italic">{error}</p>}
+        {/* Privacy policy agreement */}
+        <label className="flex items-start gap-3 cursor-pointer group mt-1">
+          <div className="relative flex-shrink-0 mt-0.5">
+            <input
+              type="checkbox"
+              checked={agreedToPolicy}
+              onChange={(e) => { setAgreedToPolicy(e.target.checked); if (error) setError(''); }}
+              className="sr-only"
+            />
+            <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+              agreedToPolicy
+                ? 'bg-premium-gold border-premium-gold'
+                : 'border-white/20 bg-white/5 group-hover:border-white/40'
+            }`}>
+              {agreedToPolicy && (
+                <svg className="w-2.5 h-2.5 text-premium-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </div>
+          </div>
+          <span className="text-xs text-white/40 leading-relaxed">
+            I agree to the{' '}
+            <Link
+              to="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-premium-gold hover:underline"
+            >
+              Privacy Policy
+            </Link>
+            {' '}and confirm I am at least 16 years old.
+          </span>
+        </label>
+
+        {error && <p className="text-red-400 text-[11px] px-1 italic">{error}</p>}
 
         <button
           type="submit"
-          disabled={loading}
-          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3.5 md:py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mt-4 md:mt-6 disabled:opacity-50"
+          disabled={loading || !agreedToPolicy}
+          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3.5 md:py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mt-2 md:mt-4 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {loading ? 'Processing...' : 'Register Now'}
+          {loading ? 'Processing...' : 'Create Account'}
         </button>
       </form>
 

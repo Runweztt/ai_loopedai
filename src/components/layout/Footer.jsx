@@ -31,7 +31,9 @@ export default function Footer() {
             {[
               ['/services', 'Services'],
               ['/guide',    'Guide'],
+              ['/safety',   'Safety'],
               ['/about',    'About'],
+              ['/privacy',  'Privacy'],
               ['/chat',     'Chat'],
             ].map(([to, label]) => (
               <Link

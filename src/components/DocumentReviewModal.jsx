@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import ReviewReportCard from './ReviewReportCard';
 import { API_BASE } from '../constants';
 
@@ -23,23 +24,41 @@ const POLL_BACKOFF    = 1.6;    // multiply interval each cycle
 
 // ── Sub-components ────────────────────────────────────────────────────
 
-const ModalShell = ({ onClose, children }) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.75)' }}>
-    <div className="relative w-full max-w-2xl bg-[#0f0f0f] border border-white/10 rounded-3xl shadow-2xl flex flex-col max-h-[90vh]">
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 text-white/30 hover:text-white/70 transition-all z-10"
-        aria-label="Close"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      {children}
-    </div>
-  </div>
-);
+// Rendered via portal directly onto document.body so that position:fixed
+// always resolves to the viewport — immune to any ancestor transform/opacity
+// animations (e.g. StepTransition fadeSlideUp) that would otherwise break
+// fixed positioning per the CSS containing-block spec.
+const ModalShell = ({ onClose, children }) => {
+  // Prevent page scroll while modal is open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="relative w-full max-w-2xl bg-[#0d0d0d] border border-white/10 rounded-3xl shadow-2xl flex flex-col max-h-[85vh] animate-scale-in">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white/30 hover:text-white/70 transition-all z-10"
+          aria-label="Close"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        {children}
+      </div>
+    </div>,
+    document.body
+  );
+};
 
 const ModalHeader = ({ title, subtitle }) => (
   <div className="px-6 pt-6 pb-4 border-b border-white/5">
@@ -287,6 +306,25 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
               <p className="text-xs text-yellow-400/70 bg-yellow-400/10 border border-yellow-400/20 rounded-lg px-3 py-2">
                 {checklist.cache_warning}
               </p>
+            )}
+
+            {/* Empty state — API failed or returned no items */}
+            {!checklist.required?.length && !checklist.conditional?.length && !checklist.optional?.length && (
+              <div className="flex flex-col items-center gap-3 py-4 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p className="text-sm text-white/50">
+                  Could not load requirements for <strong className="text-white/70">{visaType}</strong> to <strong className="text-white/70">{country}</strong>.
+                </p>
+                <p className="text-xs text-white/30">Our AI will research the official requirements during your document review.</p>
+                <button
+                  onClick={() => { setStep('details'); setChecklist(null); }}
+                  className="text-xs text-premium-gold/70 hover:text-premium-gold underline transition-all"
+                >
+                  Try different country / visa type
+                </button>
+              </div>
             )}
 
             {checklist.required?.length > 0 && (

@@ -12,8 +12,61 @@
   padding: 0;
 }
 
+/* ── Hide all scrollbars (scroll still works) ──────────────────────── */
+* {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge legacy */
+}
+*::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari / Webkit */
+}
+
 html {
   scroll-behavior: smooth;
+}
+
+/* ── Page / step transitions ───────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-slide-up {
+  animation: fadeSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Stagger child animations */
+.animate-fade-slide-up:nth-child(1) { animation-delay: 0ms; }
+.animate-fade-slide-up:nth-child(2) { animation-delay: 60ms; }
+.animate-fade-slide-up:nth-child(3) { animation-delay: 120ms; }
+
+/* Global smooth transitions for interactive elements */
+button, a, input, select, textarea {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 body {
