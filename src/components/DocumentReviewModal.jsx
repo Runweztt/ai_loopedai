@@ -181,9 +181,12 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
       if (res.status === 402) {
         throw new Error('Premium subscription required to use document review. Contact info@loopedai.io to upgrade.');
       }
+      if (res.status === 503) {
+        throw new Error('Document review is temporarily unavailable. Please try again later or contact support at info@loopedai.io.');
+      }
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || 'Failed to start review');
+        // Never display raw server error details — map to a safe message
+        throw new Error('Something went wrong starting your review. Please try again or contact support at info@loopedai.io.');
       }
 
       const data = await res.json();
@@ -215,7 +218,7 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
             return; // stop — no next timeout
           }
           if (data.status === 'failed') {
-            setReviewError(data.error || 'Review failed. Please try again.');
+            setReviewError('We could not complete the document review. Please try again or contact support at info@loopedai.io.');
             setStep('upload');
             return; // stop — no next timeout
           }

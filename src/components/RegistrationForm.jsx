@@ -127,7 +127,6 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
         setError(detail || 'Registration failed. Please try again.');
       }
     } catch (err) {
-      console.error('Registration request failed:', err);
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);

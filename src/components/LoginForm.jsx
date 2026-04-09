@@ -55,7 +55,6 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
         setError(detail || 'Login failed. Check your email and password.');
       }
     } catch (err) {
-      console.error('Login request failed:', err);
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
