@@ -11,9 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    permissions:
-      contents: write   # needed to push the deploy branch
-
     steps:
       # 1. Checkout source code
       - name: Checkout
@@ -35,44 +32,26 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_BASE_URL:         ${{ secrets.VITE_API_BASE_URL }}
-          VITE_SUPABASE_URL:         ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY:    ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_API_BASE_URL:          ${{ secrets.VITE_API_BASE_URL }}
+          VITE_SUPABASE_URL:          ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY:     ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_TELEGRAM_BOT_USERNAME: ${{ secrets.VITE_TELEGRAM_BOT_USERNAME }}
 
-      # 5. Push the built dist/ folder to the 'deploy' branch
-      #    Hostinger pulls from this branch — it must contain ONLY the
-      #    ready-to-serve files (index.html, assets/, etc.)
-      - name: Push dist/ to deploy branch
-        run: |
-          cd dist
-          git init
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "deploy: ${{ github.sha }}"
-          git push --force \
-            "https://x-token-auth:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
-            HEAD:deploy
+      # 5. Upload dist/ directly to public_html via FTP
+      #    No git state, no divergence errors — just files.
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server:               ${{ secrets.FTP_SERVER }}
+          username:             ${{ secrets.FTP_USERNAME }}
+          password:             ${{ secrets.FTP_PASSWORD }}
+          local-dir:            ./dist/
+          server-dir:           /public_html/
+          dangerous-clean-slate: true
 
-      # 6. Call Hostinger's webhook — this triggers Hostinger to pull the
-      #    updated 'deploy' branch into public_html automatically.
-      #
-      #    How to get the webhook URL:
-      #      hPanel → Git → your repo → copy the webhook URL
-      #    Then add it as a GitHub secret: HOSTINGER_WEBHOOK_URL
-      - name: Trigger Hostinger deployment
-        run: |
-          curl -s -X POST "${{ secrets.HOSTINGER_WEBHOOK_URL }}" \
-            --max-time 15 \
-            --retry 3 \
-          && echo "✅ Hostinger deploy triggered" \
-          || echo "⚠️  Webhook call failed — deploy branch was still updated"
-        continue-on-error: true
-
-      # 7. Summary
+      # 6. Summary
       - name: Deploy summary
         run: |
-          echo "✅ Build pushed to 'deploy' branch"
+          echo "✅ FTP deploy complete"
           echo "Commit : ${{ github.sha }}"
           echo "Time   : $(date -u '+%Y-%m-%d %H:%M UTC')"
