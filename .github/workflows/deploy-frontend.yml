@@ -40,14 +40,15 @@ jobs:
       # 5. Upload dist/ to public_html via rsync over SSH (port 65002)
       #    FTP is blocked by Hostinger's firewall — SSH always works.
       - name: Deploy via SSH/rsync
+        env:
+          SSH_PASS: ${{ secrets.FTP_PASSWORD }}
+          SSH_HOST: ${{ secrets.FTP_SERVER }}
+          SSH_USER: ${{ secrets.FTP_USERNAME }}
         run: |
           sudo apt-get install -y sshpass
           sshpass -p "$SSH_PASS" rsync -az --delete \
             -e "ssh -o StrictHostKeyChecking=no -p 65002" \
-            dist/ \
-            ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:~/public_html/
-        env:
-          SSH_PASS: ${{ secrets.FTP_PASSWORD }}
+            dist/ "${SSH_USER}@${SSH_HOST}:~/public_html/"
 
       # 6. Summary
       - name: Deploy summary
