@@ -225,8 +225,8 @@ function ChatApp() {
       <StepTransition stepKey={transitionKey} fullHeight={step === 'dashboard'}>
         {oauthLoading && (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="w-8 h-8 border-2 border-premium-gold/30 border-t-premium-gold rounded-full animate-spin" />
-            <p className="text-white/50 text-sm">Signing you in with Google...</p>
+            <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+            <p className="text-gray-400 text-sm">Signing you in with Google...</p>
           </div>
         )}
         {!oauthLoading && step === 'auth' && authView === 'login' && (
@@ -322,7 +322,7 @@ function AdminApp() {
 
 function MarketingLayout() {
   return (
-    <div className="bg-void min-h-screen">
+    <div className="bg-white min-h-screen">
       <Navbar />
       <main>
         <Routes>

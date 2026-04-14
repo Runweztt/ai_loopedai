@@ -1,5 +1,8 @@
 name: Deploy Frontend to Hostinger
 
+# ── Triggers ──────────────────────────────────────────────────────────────────
+# Auto-deploy on every push to main branch
+# Can also be triggered manually from GitHub Actions tab
 on:
   push:
     branches: [main]
@@ -8,27 +11,38 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    # No working-directory override — the frontend repo root IS the working dir
+    timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v4
+      # 1. Check out the repo
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      # 2. Set up Node 20 with npm cache
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          # package-lock.json is at the repo root (this is the frontend repo)
           cache-dependency-path: package-lock.json
 
+      # 3. Install dependencies (uses package-lock.json for reproducible builds)
       - name: Install dependencies
-        run: npm ci --prefer-offline
+        run: npm ci
 
+      # 4. Build the Vite app — injects the backend URL at build time
       - name: Build
         run: npm run build
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
-      - name: Deploy to Hostinger FTP
+      # 5. Deploy built files to Hostinger via FTP
+      #    Required GitHub secrets:
+      #      FTP_SERVER      → e.g. ftp.loopedai.io  or  files.000webhost.com
+      #      FTP_USERNAME    → your Hostinger FTP username
+      #      FTP_PASSWORD    → your Hostinger FTP password
+      #      FTP_SERVER_DIR  → remote path, e.g. /public_html/  (optional, defaults to /public_html/)
+      - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server:     ${{ secrets.FTP_SERVER }}
@@ -36,11 +50,32 @@ jobs:
           password:   ${{ secrets.FTP_PASSWORD }}
           local-dir:  ./dist/
           server-dir: ${{ secrets.FTP_SERVER_DIR || '/public_html/' }}
-          # dangerous-clean-slate: false keeps files that weren't part of this
-          # build (e.g. .htaccess, uploaded media) — set to true only if you
-          # want a full wipe of the remote dir on every deploy
+          # Keep existing server files that weren't part of this build
+          # (e.g. .htaccess, robots.txt, uploaded media)
           dangerous-clean-slate: false
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
+
+      # 6. (Optional) Call Hostinger's Git webhook so the panel shows deploy status
+      #    To enable: Go to hPanel → Git → enable auto-deploy → copy the webhook URL
+      #    Then add it as a GitHub secret: HOSTINGER_WEBHOOK_URL
+      - name: Notify Hostinger webhook
+        if: ${{ secrets.HOSTINGER_WEBHOOK_URL != '' }}
+        run: |
+          curl -s -X POST "${{ secrets.HOSTINGER_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{"ref":"refs/heads/main"}' \
+            --max-time 10 \
+            --retry 2 \
+          && echo "Webhook notified" || echo "Webhook call failed (non-fatal)"
+        continue-on-error: true
+
+      # 7. Print deploy summary
+      - name: Deploy summary
+        run: |
+          echo "✅ Frontend deployed successfully"
+          echo "Branch : main"
+          echo "Commit : ${{ github.sha }}"
+          echo "Time   : $(date -u '+%Y-%m-%d %H:%M UTC')"

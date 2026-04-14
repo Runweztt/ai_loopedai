@@ -42,11 +42,11 @@ const ModalShell = ({ onClose, children }) => {
       style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="relative w-full max-w-2xl bg-[#0d0d0d] border border-white/10 rounded-3xl shadow-2xl flex flex-col max-h-[85vh] animate-scale-in">
+      <div className="relative w-full max-w-2xl bg-white border border-gray-100 rounded-3xl shadow-2xl flex flex-col max-h-[85vh] animate-scale-in">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-white/30 hover:text-white/70 transition-all z-10"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-all z-10"
           aria-label="Close"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -61,14 +61,14 @@ const ModalShell = ({ onClose, children }) => {
 };
 
 const ModalHeader = ({ title, subtitle }) => (
-  <div className="px-6 pt-6 pb-4 border-b border-white/5">
+  <div className="px-6 pt-6 pb-4 border-b border-gray-100">
     <div className="flex items-center gap-3 mb-1">
-      <div className="w-8 h-8 bg-premium-gold/20 rounded-xl flex items-center justify-center flex-shrink-0 p-1.5">
-        <img src="/logo-ring.png" alt="logo" className="w-full h-full object-contain brightness-0 invert" />
+      <div className="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center flex-shrink-0 p-1.5">
+        <img src="/logo-ring.png" alt="logo" className="w-full h-full object-contain" style={{ filter: 'brightness(0) saturate(100%) invert(62%) sepia(58%) saturate(600%) hue-rotate(5deg) brightness(90%)' }} />
       </div>
-      <h2 className="text-base font-bold text-white">{title}</h2>
+      <h2 className="text-base font-bold text-gray-900">{title}</h2>
     </div>
-    {subtitle && <p className="text-white/40 text-xs ml-11">{subtitle}</p>}
+    {subtitle && <p className="text-gray-400 text-xs ml-11">{subtitle}</p>}
   </div>
 );
 
@@ -249,46 +249,46 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
             subtitle="We'll check your documents against official requirements."
           />
           {/* Disclaimer */}
-          <div className="mx-6 mt-4 px-4 py-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-300 leading-relaxed">
+          <div className="mx-6 mt-4 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-700 leading-relaxed">
             We are loopedai, an AI research assistant. We do not issue visas or provide legal advice.
             Our role is to help you understand requirements and improve your application.
             <strong className="block mt-1">Your documents are processed securely in memory and deleted after the report.</strong>
           </div>
           <div className="px-6 py-5 flex flex-col gap-4 overflow-y-auto">
             <div>
-              <label className="text-xs text-white/50 mb-1 block">Destination Country *</label>
+              <label className="text-xs text-gray-500 mb-1 block">Destination Country *</label>
               <input
                 type="text"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 placeholder="e.g. Canada, UK, USA, Australia"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-premium-gold/50 transition-all"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/20 transition-all"
               />
             </div>
             <div>
-              <label className="text-xs text-white/50 mb-1 block">Visa Type *</label>
+              <label className="text-xs text-gray-500 mb-1 block">Visa Type *</label>
               <input
                 type="text"
                 value={visaType}
                 onChange={(e) => setVisaType(e.target.value)}
                 placeholder="e.g. Study Permit, Skilled Worker Visa, F-1"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-premium-gold/50 transition-all"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/20 transition-all"
               />
             </div>
             <div>
-              <label className="text-xs text-white/50 mb-1 block">Your Nationality (optional)</label>
+              <label className="text-xs text-gray-500 mb-1 block">Your Nationality (optional)</label>
               <input
                 type="text"
                 value={nationality}
                 onChange={(e) => setNationality(e.target.value)}
                 placeholder="e.g. Nigerian, Indian, Brazilian"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-premium-gold/50 transition-all"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/20 transition-all"
               />
             </div>
             <button
               onClick={handleFetchChecklist}
               disabled={!country.trim() || !visaType.trim() || checklistLoading}
-              className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+              className="w-full bg-gold hover:bg-gold-muted text-gray-900 font-bold py-3 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm shadow-btn"
             >
               {checklistLoading ? 'Loading checklist...' : 'Show Required Documents'}
             </button>
@@ -314,16 +314,16 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
             {/* Empty state — API failed or returned no items */}
             {!checklist.required?.length && !checklist.conditional?.length && !checklist.optional?.length && (
               <div className="flex flex-col items-center gap-3 py-4 text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-black/25" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <p className="text-sm text-white/50">
-                  Could not load requirements for <strong className="text-white/70">{visaType}</strong> to <strong className="text-white/70">{country}</strong>.
+                <p className="text-sm text-black/55">
+                  Could not load requirements for <strong className="text-black/70">{visaType}</strong> to <strong className="text-black/70">{country}</strong>.
                 </p>
-                <p className="text-xs text-white/30">Our AI will research the official requirements during your document review.</p>
+                <p className="text-xs text-black/35">Our AI will research the official requirements during your document review.</p>
                 <button
                   onClick={() => { setStep('details'); setChecklist(null); }}
-                  className="text-xs text-premium-gold/70 hover:text-premium-gold underline transition-all"
+                  className="text-xs text-gold/70 hover:text-gold underline transition-all"
                 >
                   Try different country / visa type
                 </button>
@@ -332,10 +332,10 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
 
             {checklist.required?.length > 0 && (
               <div>
-                <p className="text-xs font-bold text-white/70 mb-2 uppercase tracking-wider">Required</p>
+                <p className="text-xs font-bold text-gray-600 mb-2 uppercase tracking-wider">Required</p>
                 <ul className="space-y-1">
                   {checklist.required.map((item, i) => (
-                    <li key={i} className="flex gap-2 text-sm text-white/80">
+                    <li key={i} className="flex gap-2 text-sm text-gray-700">
                       <span className="text-green-400 flex-shrink-0 mt-0.5">&#10003;</span>
                       {item}
                     </li>
@@ -346,10 +346,10 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
 
             {checklist.conditional?.length > 0 && (
               <div>
-                <p className="text-xs font-bold text-yellow-400/70 mb-2 uppercase tracking-wider">Conditional</p>
+                <p className="text-xs font-bold text-amber-600 mb-2 uppercase tracking-wider">Conditional</p>
                 <ul className="space-y-1">
                   {checklist.conditional.map((item, i) => (
-                    <li key={i} className="flex gap-2 text-sm text-white/60">
+                    <li key={i} className="flex gap-2 text-sm text-gray-600">
                       <span className="text-yellow-400 flex-shrink-0 mt-0.5">&#9888;</span>
                       {item}
                     </li>
@@ -360,11 +360,11 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
 
             {checklist.optional?.length > 0 && (
               <div>
-                <p className="text-xs font-bold text-white/30 mb-2 uppercase tracking-wider">Optional (strengthens application)</p>
+                <p className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Optional (strengthens application)</p>
                 <ul className="space-y-1">
                   {checklist.optional.map((item, i) => (
-                    <li key={i} className="flex gap-2 text-sm text-white/40">
-                      <span className="text-white/30 flex-shrink-0 mt-0.5">+</span>
+                    <li key={i} className="flex gap-2 text-sm text-gray-400">
+                      <span className="text-gray-300 flex-shrink-0 mt-0.5">+</span>
                       {item}
                     </li>
                   ))}
@@ -372,7 +372,7 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
               </div>
             )}
 
-            <p className="text-xs text-white/40 pt-2">Do you have these documents ready?</p>
+            <p className="text-xs text-gray-400 pt-2">Do you have these documents ready?</p>
             <div className="flex gap-2 flex-wrap">
               <button
                 onClick={() => setStep('upload')}
@@ -388,7 +388,7 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 bg-white/5 border border-white/10 text-white/50 font-semibold py-2.5 rounded-xl text-sm hover:bg-white/10 transition-all"
+                className="flex-1 bg-gray-50 border border-gray-200 text-gray-500 font-semibold py-2.5 rounded-xl text-sm hover:bg-gray-100 transition-all"
               >
                 Not yet
               </button>
@@ -405,17 +405,17 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
             subtitle="PDF, DOCX, JPG, PNG accepted. Up to 10 files, max 10MB each."
           />
           <div className="px-6 py-4 overflow-y-auto flex-1 space-y-4">
-            <p className="text-xs text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3">
+            <p className="text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
               Your documents are processed in memory only and permanently deleted after your report is generated. We never store your files.
             </p>
 
             {/* Collapsible checklist reference */}
             {checklist && (
-              <div className="border border-white/10 rounded-xl overflow-hidden">
+              <div className="border border-gray-200 rounded-xl overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setChecklistOpen((o) => !o)}
-                  className="w-full flex items-center justify-between px-4 py-3 text-xs font-semibold text-white/60 hover:text-white/80 hover:bg-white/5 transition-all"
+                  className="w-full flex items-center justify-between px-4 py-3 text-xs font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all"
                 >
                   <span>Required documents for {visaType} — {country}</span>
                   <svg
@@ -427,12 +427,12 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
                   </svg>
                 </button>
                 {checklistOpen && (
-                  <div className="px-4 pb-3 space-y-2 border-t border-white/5">
+                  <div className="px-4 pb-3 space-y-2 border-t border-gray-100">
                     {checklist.required?.length > 0 && (
                       <ul className="space-y-1 pt-2">
                         {checklist.required.map((item, i) => (
-                          <li key={i} className="flex gap-2 text-xs text-white/70">
-                            <span className="text-green-400 flex-shrink-0">&#10003;</span>
+                          <li key={i} className="flex gap-2 text-xs text-gray-700">
+                            <span className="text-emerald-500 flex-shrink-0">&#10003;</span>
                             {item}
                           </li>
                         ))}
@@ -441,8 +441,8 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
                     {checklist.conditional?.length > 0 && (
                       <ul className="space-y-1">
                         {checklist.conditional.map((item, i) => (
-                          <li key={i} className="flex gap-2 text-xs text-white/50">
-                            <span className="text-yellow-400 flex-shrink-0">&#9888;</span>
+                          <li key={i} className="flex gap-2 text-xs text-gray-500">
+                            <span className="text-amber-500 flex-shrink-0">&#9888;</span>
                             {item}
                           </li>
                         ))}
@@ -458,13 +458,13 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
               onDrop={handleDrop}
               onDragOver={(e) => e.preventDefault()}
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-white/15 hover:border-premium-gold/40 rounded-2xl p-8 text-center cursor-pointer transition-all group"
+              className="border-2 border-dashed border-gray-200 hover:border-gold/40 hover:bg-amber-50/30 rounded-2xl p-8 text-center cursor-pointer transition-all group"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white/20 group-hover:text-premium-gold/50 mx-auto mb-3 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-300 group-hover:text-gold/60 mx-auto mb-3 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <p className="text-sm text-white/50 group-hover:text-white/70 transition-all">Drop files here or click to browse</p>
-              <p className="text-xs text-white/25 mt-1">PDF, DOCX, JPG, PNG</p>
+              <p className="text-sm text-gray-500 group-hover:text-gray-700 transition-all">Drop files here or click to browse</p>
+              <p className="text-xs text-gray-400 mt-1">PDF, DOCX, JPG, PNG</p>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -479,15 +479,15 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
             {files.length > 0 && (
               <div className="space-y-2">
                 {files.map((f) => (
-                  <div key={f.name} className="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
+                  <div key={f.name} className="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5">
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-premium-gold/70 text-xs uppercase font-bold flex-shrink-0">
+                      <span className="text-gold text-xs uppercase font-bold flex-shrink-0">
                         {f.name.split('.').pop()}
                       </span>
-                      <span className="text-sm text-white/70 truncate">{f.name}</span>
-                      <span className="text-xs text-white/30 flex-shrink-0">{(f.size / 1024).toFixed(0)}KB</span>
+                      <span className="text-sm text-gray-700 truncate">{f.name}</span>
+                      <span className="text-xs text-gray-400 flex-shrink-0">{(f.size / 1024).toFixed(0)}KB</span>
                     </div>
-                    <button onClick={() => removeFile(f.name)} className="text-white/20 hover:text-red-400 transition-all ml-2 flex-shrink-0">
+                    <button onClick={() => removeFile(f.name)} className="text-gray-300 hover:text-red-400 transition-all ml-2 flex-shrink-0">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
@@ -504,7 +504,7 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
             <button
               onClick={handleStartReview}
               disabled={!files.length}
-              className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+              className="w-full bg-gold hover:bg-gold-muted text-gray-900 font-bold py-3 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm shadow-btn"
             >
               Start loopedai Review ({files.length} file{files.length !== 1 ? 's' : ''})
             </button>
@@ -522,19 +522,19 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
           <div className="px-6 py-8 flex flex-col items-center gap-6">
             {/* Progress bar */}
             <div className="w-full">
-              <div className="flex justify-between text-xs text-white/40 mb-2">
+              <div className="flex justify-between text-xs text-gray-400 mb-2">
                 <span>{progress.step}</span>
                 <span>{progress.percent}%</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2">
+              <div className="w-full bg-gray-100 rounded-full h-2">
                 <div
-                  className="bg-premium-gold rounded-full h-2 transition-all duration-700"
+                  className="bg-gold rounded-full h-2 transition-all duration-700"
                   style={{ width: `${progress.percent}%` }}
                 />
               </div>
             </div>
             {progress.percent > 0 && progress.percent < 100 && (
-              <p className="text-xs text-white/30 text-center">
+              <p className="text-xs text-gray-400 text-center">
                 Please keep this window open — closing it will not cancel the review, but you will need to refresh to see results.
               </p>
             )}
@@ -551,10 +551,10 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
               const done = progress.percent >= stepPct;
               const active = progress.percent >= stepPct - 15 && progress.percent < stepPct;
               return (
-                <div key={i} className={`flex items-center gap-3 w-full text-sm transition-all ${done ? 'text-green-400' : active ? 'text-white/80' : 'text-white/20'}`}>
+                <div key={i} className={`flex items-center gap-3 w-full text-sm transition-all ${done ? 'text-emerald-600' : active ? 'text-gray-800' : 'text-gray-300'}`}>
                   <span className="flex-shrink-0">
                     {done ? '✓' : active ? (
-                      <span className="inline-block w-3 h-3 border-2 border-premium-gold border-t-transparent rounded-full animate-spin" />
+                      <span className="inline-block w-3 h-3 border-2 border-gold border-t-transparent rounded-full animate-spin" />
                     ) : '○'}
                   </span>
                   {label}
@@ -574,13 +574,13 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
           <div className="px-4 pb-4 pt-2 flex gap-3">
             <button
               onClick={() => { setStep('upload'); setFiles([]); setReport(''); }}
-              className="flex-1 bg-white/5 hover:bg-white/10 text-white/60 font-semibold py-2.5 rounded-xl transition-all text-sm border border-white/10"
+              className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-600 font-semibold py-2.5 rounded-xl transition-all text-sm border border-gray-200"
             >
               New Review
             </button>
             <button
               onClick={onClose}
-              className="flex-1 bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-2.5 rounded-xl transition-all text-sm"
+              className="flex-1 bg-gold hover:bg-gold-muted text-gray-900 font-bold py-2.5 rounded-xl transition-all text-sm shadow-btn"
             >
               Done
             </button>

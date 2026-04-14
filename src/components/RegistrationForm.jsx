@@ -134,29 +134,29 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
   };
 
   const inputClass =
-    'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-premium-gold/50 transition-all text-white placeholder-white/20';
+    'w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/20 transition-all text-gray-900 placeholder-gray-400';
 
   // ── Email confirmation pending screen ─────────────────────────────
   if (emailSent) {
     return (
-      <div className="glass rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-2xl text-center">
-        <div className="w-16 h-16 bg-premium-gold/10 rounded-full flex items-center justify-center mx-auto mb-5">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-premium-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-card border border-black/10 text-center">
+        <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-5">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
         <h2 className="text-xl md:text-2xl font-bold mb-3">Check your email</h2>
-        <p className="text-white/60 text-sm mb-2">
+        <p className="text-black/60 text-sm mb-2">
           We sent a confirmation link to
         </p>
-        <p className="text-premium-gold font-semibold text-sm mb-6 break-all">{formData.email}</p>
-        <p className="text-white/40 text-xs mb-8">
+        <p className="text-gold font-semibold text-sm mb-6 break-all">{formData.email}</p>
+        <p className="text-black/45 text-xs mb-8">
           Click the link in the email to confirm your account, then sign in.
           Check your spam folder if you don't see it within a few minutes.
         </p>
         <button
           onClick={onSwitchToLogin}
-          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-premium-gold/20"
+          className="w-full bg-gold hover:bg-gold-muted text-gray-900 font-bold py-3.5 rounded-xl transition-all shadow-btn"
         >
           Go to Sign In
         </button>
@@ -165,10 +165,10 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
   }
 
   return (
-    <div className="glass rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-2xl">
+    <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-card border border-black/10">
       <div className="mb-5 md:mb-8">
         <h2 className="text-xl md:text-2xl font-bold mb-2">Create Account</h2>
-        <p className="text-white/50 text-xs md:text-sm">Join the most efficient immigration assistance system.</p>
+        <p className="text-black/55 text-xs md:text-sm">Join the most efficient immigration assistance system.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
@@ -207,7 +207,7 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-all"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black/70 transition-all"
             tabIndex={-1}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
@@ -221,13 +221,13 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
             type="button"
             onClick={() => setCountryOpen((o) => !o)}
             className={`${inputClass} flex items-center justify-between text-left ${
-              formData.country ? 'text-white' : 'text-white/20'
+              formData.country ? 'text-black' : 'text-black/30'
             }`}
           >
             <span>{formData.country || 'Select Country'}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className={`h-4 w-4 text-white/30 flex-shrink-0 transition-transform duration-200 ${countryOpen ? 'rotate-180' : ''}`}
+              className={`h-4 w-4 text-black/30 flex-shrink-0 transition-transform duration-200 ${countryOpen ? 'rotate-180' : ''}`}
               fill="none" viewBox="0 0 24 24" stroke="currentColor"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -235,14 +235,14 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
           </button>
 
           {countryOpen && (
-            <div className="absolute z-50 top-full mt-1 w-full bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden">
+            <div className="absolute z-50 top-full mt-1 w-full bg-white border border-black/10 rounded-xl shadow-2xl overflow-hidden">
               {/* Search box */}
-              <div className="p-2 border-b border-white/5">
+              <div className="p-2 border-b border-black/8">
                 <input
                   type="text"
                   placeholder="Search country..."
                   autoFocus
-                  className="w-full bg-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none"
+                  className="w-full bg-black/5 rounded-lg px-3 py-2 text-sm text-black placeholder-black/30 focus:outline-none"
                   value={countrySearch}
                   onChange={(e) => setCountrySearch(e.target.value)}
                 />
@@ -250,15 +250,15 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
               {/* List */}
               <ul className="max-h-48 overflow-y-auto scrollbar-thin">
                 {filteredCountries.length === 0 ? (
-                  <li className="px-4 py-3 text-sm text-white/30 text-center">No countries found</li>
+                  <li className="px-4 py-3 text-sm text-black/35 text-center">No countries found</li>
                 ) : (
                   filteredCountries.map((country) => (
                     <li key={country}>
                       <button
                         type="button"
                         onClick={() => selectCountry(country)}
-                        className={`w-full text-left px-4 py-2.5 text-sm transition-all hover:bg-premium-gold/10 hover:text-premium-gold ${
-                          formData.country === country ? 'text-premium-gold bg-premium-gold/10' : 'text-white/70'
+                        className={`w-full text-left px-4 py-2.5 text-sm transition-all hover:bg-amber-50 hover:text-gold ${
+                          formData.country === country ? 'text-gold bg-amber-50' : 'text-gray-700'
                         }`}
                       >
                         {country}
@@ -292,24 +292,24 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
             />
             <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
               agreedToPolicy
-                ? 'bg-premium-gold border-premium-gold'
-                : 'border-white/20 bg-white/5 group-hover:border-white/40'
+                ? 'bg-gold border-gold'
+                : 'border-gray-300 bg-white group-hover:border-gray-400'
             }`}>
               {agreedToPolicy && (
-                <svg className="w-2.5 h-2.5 text-premium-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <svg className="w-2.5 h-2.5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               )}
             </div>
           </div>
-          <span className="text-xs text-white/40 leading-relaxed">
+          <span className="text-xs text-black/45 leading-relaxed">
             I agree to the{' '}
             <Link
               to="/privacy"
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-premium-gold hover:underline"
+              className="text-gold hover:underline"
             >
               Privacy Policy
             </Link>
@@ -322,22 +322,22 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
         <button
           type="submit"
           disabled={loading || !agreedToPolicy}
-          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3.5 md:py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mt-2 md:mt-4 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full bg-gold hover:bg-gold-muted text-gray-900 font-bold py-3.5 md:py-4 rounded-xl transition-all shadow-btn mt-2 md:mt-4 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {loading ? 'Processing...' : 'Create Account'}
         </button>
       </form>
 
       <div className="flex items-center gap-3 mt-5">
-        <div className="flex-1 h-px bg-white/10" />
-        <span className="text-white/20 text-xs">or</span>
-        <div className="flex-1 h-px bg-white/10" />
+        <div className="flex-1 h-px bg-black/10" />
+        <span className="text-black/30 text-xs">or</span>
+        <div className="flex-1 h-px bg-black/10" />
       </div>
 
       <button
         type="button"
         onClick={() => signInWithGoogle(window.location.origin)}
-        className="w-full flex items-center justify-center gap-3 mt-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-3 text-sm font-medium text-white/80 transition-all"
+        className="w-full flex items-center justify-center gap-3 mt-4 bg-black/5 hover:bg-black/10 border border-black/10 rounded-xl py-3 text-sm font-medium text-black/80 transition-all"
       >
         <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -348,11 +348,11 @@ const RegistrationForm = ({ onSafeSuccess, onSwitchToLogin }) => {
         Continue with Google
       </button>
 
-      <p className="text-center text-white/40 text-xs md:text-sm mt-6">
+      <p className="text-center text-black/45 text-xs md:text-sm mt-6">
         Already have an account?{' '}
         <button
           onClick={onSwitchToLogin}
-          className="text-premium-gold hover:underline font-medium"
+          className="text-gold hover:underline font-medium"
         >
           Sign in
         </button>

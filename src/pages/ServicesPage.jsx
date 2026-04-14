@@ -4,7 +4,7 @@ import CTASection  from '../components/sections/CTASection'
 
 export default function ServicesPage() {
   return (
-    <div className="pt-16 bg-void min-h-screen">
+    <div className="pt-16 bg-white min-h-screen">
       <Services />
       <HowItWorks />
       <CTASection />

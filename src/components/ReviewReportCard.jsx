@@ -137,7 +137,7 @@ const renderInline = (text) => {
     if (p.startsWith('**') || p.startsWith('__'))
       return <strong key={i} className="text-white font-semibold">{p.slice(2, -2)}</strong>;
     if (p.startsWith('`'))
-      return <code key={i} className="bg-white/10 text-premium-gold px-1 rounded text-[0.85em] font-mono">{p.slice(1, -1)}</code>;
+      return <code key={i} className="bg-white/10 text-gold px-1 rounded text-[0.85em] font-mono">{p.slice(1, -1)}</code>;
     if (p.startsWith('*'))
       return <em key={i} className="text-white/80 italic">{p.slice(1, -1)}</em>;
     if (p.startsWith('http'))
@@ -244,7 +244,7 @@ const LineBlock = ({ line }) => {
     const st = matchStatus(text.trim());
     return (
       <div className="flex gap-2.5 py-0.5 ml-1">
-        <span className="text-premium-gold/60 mt-1 flex-shrink-0 text-xs">•</span>
+        <span className="text-gold/60 mt-1 flex-shrink-0 text-xs">•</span>
         <span className="flex-1 text-white/75 text-xs leading-relaxed">
           {st ? <StatusPill status={st.key} /> : renderInline(text)}
         </span>
@@ -289,7 +289,7 @@ const Section = ({ title, icon, children, defaultOpen = true }) => {
         className="w-full flex items-center justify-between px-4 py-3 bg-white/3 hover:bg-white/5 transition-all text-left gap-3"
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className="text-premium-gold/70 text-sm flex-shrink-0">{icon}</span>
+          <span className="text-gold/70 text-sm flex-shrink-0">{icon}</span>
           <span className="text-sm font-semibold text-white/90 truncate">{title}</span>
         </div>
         <svg className={`w-4 h-4 text-white/25 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -556,7 +556,7 @@ const ReviewReportCard = ({ report, country, visaType }) => {
       <div className="flex items-center justify-between px-5 py-3.5 bg-white/4 border-b border-white/8">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
-            <span className="text-premium-gold text-xs font-bold uppercase tracking-wider">Visa Document Review</span>
+            <span className="text-gold text-xs font-bold uppercase tracking-wider">Visa Document Review</span>
           </div>
           <p className="text-white/35 text-[10px] uppercase tracking-widest font-medium">
             {country} &bull; {visaType}

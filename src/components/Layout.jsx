@@ -36,10 +36,10 @@ const Layout = ({ children, isFullWidth }) => {
             />
           </a>
         </div>
-        <nav className="hidden md:flex gap-8 text-sm font-medium text-white/70">
-          <Link to="/guide"    className="hover:text-white transition-colors">How it Works</Link>
-          <Link to="/services" className="hover:text-white transition-colors">Services</Link>
-          <Link to="/safety"   className="hover:text-white transition-colors">Safety</Link>
+        <nav className="hidden md:flex gap-8 text-sm font-medium text-black/70">
+          <Link to="/guide"    className="hover:text-black transition-colors">How it Works</Link>
+          <Link to="/services" className="hover:text-black transition-colors">Services</Link>
+          <Link to="/safety"   className="hover:text-black transition-colors">Safety</Link>
         </nav>
       </header>
 
@@ -67,7 +67,7 @@ const Layout = ({ children, isFullWidth }) => {
       )}
 
       {/* ── Footer ─────────────────────────────────────────────── */}
-      <footer className="flex-shrink-0 w-full py-4 text-center text-white/20 text-[10px] tracking-widest uppercase border-t border-white/5">
+      <footer className="flex-shrink-0 w-full py-4 text-center text-black/30 text-[10px] tracking-widest uppercase border-t border-black/10">
         <div
           role="img" aria-label="LoopedAI"
           style={{
@@ -80,9 +80,9 @@ const Layout = ({ children, isFullWidth }) => {
         />
         &copy; 2026 — Secure &amp; Efficient
         <span className="mx-3 opacity-30">·</span>
-        <Link to="/privacy" className="normal-case tracking-normal hover:text-white/50 transition-colors">Privacy Policy</Link>
+        <Link to="/privacy" className="normal-case tracking-normal hover:text-black/60 transition-colors">Privacy Policy</Link>
         <span className="mx-3 opacity-30">·</span>
-        <Link to="/safety" className="normal-case tracking-normal hover:text-white/50 transition-colors">Safety</Link>
+        <Link to="/safety" className="normal-case tracking-normal hover:text-black/60 transition-colors">Safety</Link>
       </footer>
 
     </div>

@@ -62,13 +62,13 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
   };
 
   const inputClass =
-    'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-premium-gold/50 transition-all text-white placeholder-white/20';
+    'w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/20 transition-all text-gray-900 placeholder-gray-400';
 
   return (
-    <div className="glass rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-2xl">
+    <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-card border border-black/10">
       <div className="mb-6 md:mb-8">
         <h2 className="text-xl md:text-2xl font-bold mb-2">Sign In</h2>
-        <p className="text-white/50 text-xs md:text-sm">Welcome back. Access your loopedai assistant.</p>
+        <p className="text-black/55 text-xs md:text-sm">Welcome back. Access your loopedai assistant.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
@@ -94,7 +94,7 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-all"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black/70 transition-all"
             tabIndex={-1}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
@@ -107,22 +107,22 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold py-3.5 md:py-4 rounded-xl transition-all shadow-lg shadow-premium-gold/20 mt-4 md:mt-6 disabled:opacity-50"
+          className="w-full bg-gold hover:bg-gold-muted text-gray-900 font-bold py-3.5 md:py-4 rounded-xl transition-all shadow-btn mt-4 md:mt-6 disabled:opacity-50"
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
 
       <div className="flex items-center gap-3 mt-5">
-        <div className="flex-1 h-px bg-white/10" />
-        <span className="text-white/20 text-xs">or</span>
-        <div className="flex-1 h-px bg-white/10" />
+        <div className="flex-1 h-px bg-black/10" />
+        <span className="text-black/30 text-xs">or</span>
+        <div className="flex-1 h-px bg-black/10" />
       </div>
 
       <button
         type="button"
         onClick={() => signInWithGoogle(window.location.origin)}
-        className="w-full flex items-center justify-center gap-3 mt-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-3 text-sm font-medium text-white/80 transition-all"
+        className="w-full flex items-center justify-center gap-3 mt-4 bg-black/5 hover:bg-black/10 border border-black/10 rounded-xl py-3 text-sm font-medium text-black/80 transition-all"
       >
         <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -133,11 +133,11 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
         Continue with Google
       </button>
 
-      <p className="text-center text-white/40 text-xs md:text-sm mt-6">
+      <p className="text-center text-gray-400 text-xs md:text-sm mt-6">
         No account?{' '}
         <button
           onClick={onSwitchToRegister}
-          className="text-premium-gold hover:underline font-medium"
+          className="text-gold hover:underline font-medium"
         >
           Register now
         </button>

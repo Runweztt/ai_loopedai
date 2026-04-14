@@ -6,14 +6,14 @@ const badge = {
   green:  'px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-500/20 text-green-400',
   red:    'px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/20 text-red-400',
   gold:   'px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-500/20 text-yellow-400',
-  muted:  'px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/5 text-white/30',
+  muted:  'px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/5 text-black/35',
 };
 
 const Card = ({ label, children, sub }) => (
-  <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-5">
-    <p className="text-xs text-white/40 mb-2">{label}</p>
+  <div className="bg-black/5 border border-black/12 rounded-2xl p-4 md:p-5">
+    <p className="text-xs text-black/45 mb-2">{label}</p>
     {children}
-    {sub && <p className="text-[10px] text-white/25 mt-1">{sub}</p>}
+    {sub && <p className="text-[10px] text-black/30 mt-1">{sub}</p>}
   </div>
 );
 
@@ -77,9 +77,9 @@ const AdminDashboard = ({ userData, onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen bg-void text-white">
+    <div className="min-h-screen bg-white text-gray-900">
       {/* Header */}
-      <header className="border-b border-white/8 px-4 md:px-6 py-4 flex items-center justify-between gap-3">
+      <header className="border-b border-black/10 px-4 md:px-6 py-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <div
             role="img" aria-label="LoopedAI"
@@ -92,20 +92,20 @@ const AdminDashboard = ({ userData, onLogout }) => {
             }}
           />
           <div className="min-w-0">
-            <p className="text-[10px] text-white/30 uppercase tracking-widest">Super Admin</p>
+            <p className="text-[10px] text-black/35 uppercase tracking-widest">Super Admin</p>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-xs text-white/30 hidden md:block truncate max-w-[160px]">{userData?.email}</span>
+          <span className="text-xs text-black/35 hidden md:block truncate max-w-[160px]">{userData?.email}</span>
           <a
             href="/chat"
-            className="text-xs border border-white/10 rounded-lg px-3 py-1.5 hover:bg-white/5 transition-all"
+            className="text-xs border border-black/12 rounded-lg px-3 py-1.5 hover:bg-black/5 transition-all"
           >
             Chat
           </a>
           <button
             onClick={onLogout}
-            className="text-xs border border-white/10 rounded-lg px-3 py-1.5 hover:bg-white/5 transition-all text-white/50"
+            className="text-xs border border-black/12 rounded-lg px-3 py-1.5 hover:bg-black/5 transition-all text-black/55"
           >
             Sign out
           </button>
@@ -115,7 +115,7 @@ const AdminDashboard = ({ userData, onLogout }) => {
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8 space-y-6 md:space-y-8">
         {loading && (
           <div className="flex justify-center py-20">
-            <div className="w-8 h-8 border-2 border-premium-gold/30 border-t-premium-gold rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
           </div>
         )}
 
@@ -127,7 +127,7 @@ const AdminDashboard = ({ userData, onLogout }) => {
           <>
             {/* System Health */}
             <section>
-              <h2 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">System Health</h2>
+              <h2 className="text-xs font-bold text-black/35 uppercase tracking-widest mb-3">System Health</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <Card label="Overall">
                   <span className={system.status === 'ok' ? badge.green : badge.red}>
@@ -145,7 +145,7 @@ const AdminDashboard = ({ userData, onLogout }) => {
                   </span>
                 </Card>
                 <Card label="Active Now" sub="last 5 min">
-                  <p className="text-2xl font-black text-premium-gold">{system.active_users}</p>
+                  <p className="text-2xl font-black text-gold">{system.active_users}</p>
                 </Card>
               </div>
             </section>
@@ -153,30 +153,30 @@ const AdminDashboard = ({ userData, onLogout }) => {
             {/* User Stats + Table */}
             {users && (
               <section>
-                <h2 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Users</h2>
+                <h2 className="text-xs font-bold text-black/35 uppercase tracking-widest mb-3">Users</h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
                   <Card label="Total"><p className="text-2xl md:text-3xl font-black">{users.total}</p></Card>
                   <Card label="Online"><p className="text-2xl md:text-3xl font-black text-green-400">{users.online}</p></Card>
-                  <Card label="Offline"><p className="text-2xl md:text-3xl font-black text-white/30">{users.offline}</p></Card>
+                  <Card label="Offline"><p className="text-2xl md:text-3xl font-black text-black/35">{users.offline}</p></Card>
                 </div>
 
                 {/* Scrollable table on mobile */}
-                <div className="overflow-x-auto rounded-2xl border border-white/8">
+                <div className="overflow-x-auto rounded-2xl border border-black/10">
                   <table className="w-full text-sm min-w-[480px]">
                     <thead>
-                      <tr className="border-b border-white/8">
+                      <tr className="border-b border-black/10">
                         {['User', 'Status', 'Plan', 'Last Seen', 'Action'].map((h) => (
-                          <th key={h} className="text-left text-[10px] font-bold text-white/30 uppercase tracking-wider px-4 py-3">{h}</th>
+                          <th key={h} className="text-left text-[10px] font-bold text-black/35 uppercase tracking-wider px-4 py-3">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {users.users.map((u) => (
-                        <tr key={u.id} className="border-b border-white/5 hover:bg-white/3 transition-all">
+                        <tr key={u.id} className="border-b border-black/10 hover:bg-black/3 transition-all">
                           <td className="px-4 py-3">
                             <p className="font-medium text-xs truncate max-w-[120px]">{u.full_name || '—'}</p>
-                            <p className="text-[10px] text-white/30 truncate max-w-[120px]">{u.email}</p>
+                            <p className="text-[10px] text-black/35 truncate max-w-[120px]">{u.email}</p>
                           </td>
                           <td className="px-4 py-3">
                             {u.is_revoked ? (
@@ -190,15 +190,15 @@ const AdminDashboard = ({ userData, onLogout }) => {
                           <td className="px-4 py-3">
                             {u.is_premium
                               ? <span className={badge.gold}>Premium</span>
-                              : <span className="text-[10px] text-white/25">Free</span>
+                              : <span className="text-[10px] text-black/30">Free</span>
                             }
                           </td>
                           <td className="px-4 py-3">
-                            <span className="text-[10px] text-white/30">{formatLastSeen(u.last_seen)}</span>
+                            <span className="text-[10px] text-black/35">{formatLastSeen(u.last_seen)}</span>
                           </td>
                           <td className="px-4 py-3">
                             {u.is_admin ? (
-                              <span className="text-[10px] text-premium-gold font-bold">Admin</span>
+                              <span className="text-[10px] text-gold font-bold">Admin</span>
                             ) : (
                               <button
                                 onClick={() => handleRevoke(u.id, u.is_revoked)}
@@ -217,7 +217,7 @@ const AdminDashboard = ({ userData, onLogout }) => {
                       ))}
                       {users.users.length === 0 && (
                         <tr>
-                          <td colSpan={5} className="px-4 py-8 text-center text-xs text-white/20">No users yet.</td>
+                          <td colSpan={5} className="px-4 py-8 text-center text-xs text-black/25">No users yet.</td>
                         </tr>
                       )}
                     </tbody>
@@ -229,7 +229,7 @@ const AdminDashboard = ({ userData, onLogout }) => {
             <div className="flex justify-end">
               <button
                 onClick={fetchData}
-                className="text-xs text-white/30 hover:text-white/60 transition-all border border-white/10 rounded-lg px-4 py-2"
+                className="text-xs text-black/35 hover:text-black/60 transition-all border border-black/12 rounded-lg px-4 py-2"
               >
                 Refresh
               </button>

@@ -175,7 +175,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
       {/* Main chat panel — fills Layout's flex-1 main. Shifts right on desktop when sidebar open. */}
       <div className={`flex flex-col flex-1 min-h-0 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : ''}`}>
         {/* Header */}
-        <div className="glass rounded-t-2xl md:rounded-t-3xl px-4 py-3 md:p-5 border-b border-white/5 flex-shrink-0">
+        <div className="glass rounded-t-2xl md:rounded-t-3xl px-4 py-3 md:p-5 border-b border-black/10 flex-shrink-0">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 flex-1 flex items-center gap-2">
               {/* <div
@@ -189,10 +189,10 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
                 }}
               /> */}
               
-              <p className="text-white/40 text-[10px] md:text-xs mt-0.5 truncate">
+              <p className="text-black/45 text-[10px] md:text-xs mt-0.5 truncate">
                 {userData?.country || 'Global'}
                 {!isPremium && (
-                  <span className="ml-2 text-premium-gold font-medium">
+                  <span className="ml-2 text-gold font-medium">
                     {Math.max(0, FREE_PROMPT_LIMIT - promptCount)}/{FREE_PROMPT_LIMIT} left
                   </span>
                 )}
@@ -201,26 +201,26 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               {loadingSession && (
-                <div className="w-3 h-3 border border-premium-gold/40 border-t-premium-gold rounded-full animate-spin" />
+                <div className="w-3 h-3 border border-gold/40 border-t-gold rounded-full animate-spin" />
               )}
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse hidden md:block" />
               {userData?.is_admin && (
                 <a
                   href="/admin"
-                  className="text-[10px] text-premium-gold border border-premium-gold/30 rounded-lg px-2 py-1 hover:bg-premium-gold/10 transition-all font-semibold"
+                  className="text-[10px] text-gold border border-gold/30 rounded-lg px-2 py-1 hover:bg-amber-50 transition-all font-semibold"
                 >
                   Admin
                 </a>
               )}
               <button
                 onClick={onLogout}
-                className="text-[10px] text-white/30 hover:text-red-400/70 transition-all border border-white/10 rounded-lg px-2 md:px-3 py-1 font-medium"
+                className="text-[10px] text-black/35 hover:text-red-400/70 transition-all border border-black/12 rounded-lg px-2 md:px-3 py-1 font-medium"
               >
                 Logout
               </button>
               <button
                 onClick={() => navigate('/')}
-                className="text-[10px] text-white/40 hover:text-white transition-all border border-white/10 hover:border-white/30 rounded-lg px-2 md:px-3 py-1 font-medium flex items-center gap-1"
+                className="text-[10px] text-black/45 hover:text-white transition-all border border-black/12 hover:border-black/30 rounded-lg px-2 md:px-3 py-1 font-medium flex items-center gap-1"
                 title="Go to home page"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -233,14 +233,14 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto glass border-x border-white/5 p-4 md:p-6 space-y-4 md:space-y-6 scrollbar-thin">
+        <div className="flex-1 overflow-y-auto glass border-x border-black/10 p-4 md:p-6 space-y-4 md:space-y-6 scrollbar-thin">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
                 className={`max-w-[92%] md:max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
                   msg.role === 'user'
-                    ? 'bg-premium-gold text-premium-dark font-medium rounded-br-none shadow-premium-gold/10'
-                    : 'bg-white/5 text-white/90 border border-white/5 rounded-bl-none'
+                    ? 'bg-gold text-gray-900 font-medium rounded-br-none'
+                    : 'bg-gray-50 text-gray-800 border border-gray-100 rounded-bl-none'
                 }`}
               >
                 {msg.role === 'assistant' && (
@@ -267,7 +267,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white/5 border border-white/5 rounded-2xl rounded-bl-md px-4 py-3">
+              <div className="bg-gray-50 border border-gray-100 rounded-2xl rounded-bl-md px-4 py-3">
                 <div className="flex items-center gap-2 mb-2">
                   <div
                     role="img" aria-label="LoopedAI"
@@ -281,9 +281,9 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
                   />
                 </div>
                 <div className="flex gap-1.5">
-                  <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -292,7 +292,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSend} className="glass rounded-b-2xl md:rounded-b-3xl border-t border-white/5 p-3 md:p-5 flex-shrink-0">
+        <form onSubmit={handleSend} className="glass rounded-b-2xl md:rounded-b-3xl border-t border-black/10 p-3 md:p-5 flex-shrink-0">
           {isPremium && (
             <div className="flex gap-2 md:gap-3 items-center mb-2">
               <ReviewDocumentsButton
@@ -309,19 +309,19 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Message your assistant..."
               disabled={loading}
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-premium-gold/50 transition-all disabled:opacity-50"
+              className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/20 transition-all disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="bg-premium-gold hover:bg-yellow-500 text-premium-dark font-bold w-12 h-12 flex items-center justify-center rounded-xl transition-all shadow-lg shadow-premium-gold/20 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+              className="bg-gold hover:bg-gold-muted text-gray-900 font-bold w-12 h-12 flex items-center justify-center rounded-xl transition-all shadow-btn disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
             </button>
           </div>
-          <p className="text-[10px] text-white/20 mt-3 text-center uppercase tracking-widest leading-none">
+          <p className="text-[10px] text-gray-400 mt-3 text-center uppercase tracking-widest leading-none">
             AI-generated responses • Research purposes only
           </p>
         </form>

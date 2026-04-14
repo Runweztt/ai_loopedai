@@ -59,7 +59,7 @@ const TIMELINE = [
 
 export default function AboutPage() {
   return (
-    <div className="pt-16 bg-void min-h-screen">
+    <div className="pt-16 bg-white min-h-screen">
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <section className="py-24 md:py-32 relative overflow-hidden flex items-center justify-center">
@@ -70,7 +70,7 @@ export default function AboutPage() {
           <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold border border-gold/20 rounded-full px-4 py-1.5 mb-6">
             Our Mission
           </span>
-          <h1 className="font-display font-extrabold text-4xl sm:text-5xl md:text-7xl text-white leading-[1.08] mb-7">
+          <h1 className="font-display font-extrabold text-4xl sm:text-5xl md:text-7xl text-black leading-[1.08] mb-7">
             Immigration intelligence{' '}
             <span className="font-serif italic text-slate-400">built for real people</span>
           </h1>
@@ -83,12 +83,12 @@ export default function AboutPage() {
       </section>
 
       {/* ── Stats bar ────────────────────────────────────────────── */}
-      <section className="border-t border-b border-white/5 py-10">
+      <section className="border-t border-b border-gray-100 py-10 bg-gray-50">
         <div className="max-w-5xl mx-auto px-6 lg:px-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {STATS.map(s => (
               <div key={s.label} className="text-center">
-                <p className="font-display font-extrabold text-4xl text-premium-gold mb-1">{s.value}</p>
+                <p className="font-display font-extrabold text-4xl text-gold mb-1">{s.value}</p>
                 <p className="text-xs text-slate-500 uppercase tracking-widest">{s.label}</p>
               </div>
             ))}
@@ -97,12 +97,12 @@ export default function AboutPage() {
       </section>
 
       {/* ── The problem we solve ─────────────────────────────────── */}
-      <section className="py-20 border-b border-white/5">
+      <section className="py-20 border-b border-black/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold mb-4">Why we exist</p>
-              <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-6 leading-tight">
+              <h2 className="font-display font-bold text-3xl md:text-4xl text-black mb-6 leading-tight">
                 The system is broken.<br />
                 <span className="text-slate-400">We're fixing the information layer.</span>
               </h2>
@@ -122,7 +122,7 @@ export default function AboutPage() {
                 'Basic information questions cost hundreds in legal fees',
                 'Non-native speakers have almost no reliable resources in plain English',
               ].map((pain, i) => (
-                <div key={i} className="flex items-start gap-3 bg-navy border border-white/6 rounded-xl p-4">
+                <div key={i} className="flex items-start gap-3 bg-gray-50 border border-gray-100 rounded-xl p-4">
                   <span className="text-red-400/70 mt-0.5 flex-shrink-0 text-base leading-none">✕</span>
                   <p className="text-sm text-slate-400 leading-relaxed">{pain}</p>
                 </div>
@@ -133,22 +133,22 @@ export default function AboutPage() {
       </section>
 
       {/* ── Founder ──────────────────────────────────────────────── */}
-      <section className="py-20 border-b border-white/5">
+      <section className="py-20 border-b border-black/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold mb-10">The team</p>
           <div className="flex flex-wrap gap-8">
             {TEAM.map(person => (
-              <div key={person.name} className="relative flex items-start gap-6 bg-navy border border-white/6 rounded-2xl p-7 max-w-xl">
+              <div key={person.name} className="relative flex items-start gap-6 bg-white border border-gray-100 rounded-2xl p-7 max-w-xl shadow-card">
                 {/* Highlight badge */}
-                <span className="absolute top-4 right-4 text-[9px] font-bold uppercase tracking-widest text-premium-gold border border-premium-gold/25 rounded-full px-2.5 py-1">
+                <span className="absolute top-4 right-4 text-[9px] font-bold uppercase tracking-widest text-gold border border-gold/25 rounded-full px-2.5 py-1">
                   {person.highlight}
                 </span>
                 {/* Avatar */}
-                <div className="w-16 h-16 rounded-2xl bg-premium-gold/15 border border-premium-gold/30 flex items-center justify-center flex-shrink-0">
-                  <span className="text-premium-gold font-display font-bold text-xl">{person.initials}</span>
+                <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-gold/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-gold font-display font-bold text-xl">{person.initials}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-display font-bold text-white text-lg leading-tight">{person.name}</h3>
+                  <h3 className="font-display font-bold text-black text-lg leading-tight">{person.name}</h3>
                   <p className="text-gold text-xs mb-3 mt-0.5">{person.role}</p>
                   <p className="text-slate-400 text-sm leading-relaxed">{person.bio}</p>
                 </div>
@@ -156,12 +156,12 @@ export default function AboutPage() {
             ))}
 
             {/* Hiring card */}
-            <div className="flex items-center gap-5 border border-dashed border-white/10 rounded-2xl p-7 max-w-sm">
-              <div className="w-16 h-16 rounded-2xl bg-white/3 border border-white/8 flex items-center justify-center flex-shrink-0">
-                <Users size={22} className="text-white/20" />
+            <div className="flex items-center gap-5 border border-dashed border-black/15 rounded-2xl p-7 max-w-sm">
+              <div className="w-16 h-16 rounded-2xl bg-black/3 border border-black/10 flex items-center justify-center flex-shrink-0">
+                <Users size={22} className="text-black/20" />
               </div>
               <div>
-                <h3 className="font-display font-bold text-white/40 text-base mb-1">Could be you</h3>
+                <h3 className="font-display font-bold text-black/40 text-base mb-1">Could be you</h3>
                 <p className="text-slate-600 text-xs leading-relaxed">We're a small team building something ambitious. Reach out if you care about access to information.</p>
               </div>
             </div>
@@ -170,21 +170,21 @@ export default function AboutPage() {
       </section>
 
       {/* ── Timeline ─────────────────────────────────────────────── */}
-      <section className="py-20 border-b border-white/5">
+      <section className="py-20 border-b border-black/10">
         <div className="max-w-4xl mx-auto px-6 lg:px-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold mb-10">Our story</p>
           <div className="relative">
             {/* Vertical line */}
-            <div className="absolute left-[52px] top-4 bottom-4 w-px bg-white/5" />
+            <div className="absolute left-[52px] top-4 bottom-4 w-px bg-black/10" />
             <div className="space-y-8">
               {TIMELINE.map((item, i) => (
                 <div key={i} className="flex gap-6 items-start">
                   <div className="w-[52px] flex-shrink-0 text-right">
                     <span className="text-xs font-mono font-bold text-gold">{item.year}</span>
                   </div>
-                  <div className="relative flex-1 bg-navy border border-white/6 rounded-xl px-5 py-4">
+                  <div className="relative flex-1 bg-gray-50 border border-gray-100 rounded-xl px-5 py-4">
                     {/* Connector dot */}
-                    <div className="absolute -left-[23px] top-4 w-3 h-3 rounded-full border-2 border-gold/40 bg-void" />
+                    <div className="absolute -left-[23px] top-4 w-3 h-3 rounded-full border-2 border-gold/40 bg-white" />
                     <p className="text-sm text-slate-400 leading-relaxed">{item.event}</p>
                   </div>
                 </div>
@@ -195,24 +195,24 @@ export default function AboutPage() {
       </section>
 
       {/* ── What we stand for ────────────────────────────────────── */}
-      <section className="py-20 border-b border-white/5">
+      <section className="py-20 border-b border-black/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="mb-10">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold mb-2">What we stand for</p>
-            <h2 className="font-display font-bold text-2xl md:text-3xl text-white">Six principles we don't compromise on</h2>
+            <h2 className="font-display font-bold text-2xl md:text-3xl text-black">Six principles we don't compromise on</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {PILLARS.map((p, i) => {
               const Icon = p.icon
               return (
-                <div key={p.title} className="group flex gap-4 bg-navy border border-white/6 rounded-xl p-5 hover:border-gold/20 transition-all duration-200">
-                  <div className="w-10 h-10 rounded-xl bg-navy-light border border-white/6 flex items-center justify-center shrink-0 group-hover:border-gold/20 transition-all">
+                <div key={p.title} className="group flex gap-4 bg-white border border-gray-100 rounded-2xl p-5 shadow-card hover:shadow-card-hover hover:border-gray-200 transition-all duration-250">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0 group-hover:border-gold/20 transition-all">
                     <Icon size={16} className="text-gold" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-white/20 font-mono mb-1">0{i + 1}</p>
-                    <h3 className="font-display font-bold text-white text-sm mb-1.5">{p.title}</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">{p.desc}</p>
+                    <p className="text-[10px] text-gray-300 font-mono mb-1">0{i + 1}</p>
+                    <h3 className="font-display font-bold text-gray-900 text-sm mb-1.5">{p.title}</h3>
+                    <p className="text-xs text-gray-500 leading-relaxed">{p.desc}</p>
                   </div>
                 </div>
               )
@@ -224,13 +224,13 @@ export default function AboutPage() {
       {/* ── Disclaimer ───────────────────────────────────────────── */}
       <section className="py-16">
         <div className="max-w-3xl mx-auto px-6 lg:px-10">
-          <div className="bg-navy border border-white/6 rounded-2xl p-8 text-center">
-            <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center mx-auto mb-5">
-              <Scale size={18} className="text-white/30" />
+          <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 text-center shadow-card">
+            <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center mx-auto mb-5">
+              <Scale size={18} className="text-gray-400" />
             </div>
-            <h3 className="font-display font-bold text-white text-base mb-3">A note on legal advice</h3>
-            <p className="text-sm text-slate-400 leading-relaxed max-w-xl mx-auto">
-              <strong className="text-white">We are not lawyers and do not issue visas.</strong>{' '}
+            <h3 className="font-display font-bold text-gray-900 text-base mb-3">A note on legal advice</h3>
+            <p className="text-sm text-gray-500 leading-relaxed max-w-xl mx-auto">
+              <strong className="text-gray-900">We are not lawyers and do not issue visas.</strong>{' '}
               LoopedAI is the intelligence layer that makes sure you walk into any application fully prepared —
               with the right documents, the right requirements, and zero surprises.
               When you need binding legal counsel, we connect you to vetted immigration lawyers.

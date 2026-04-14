@@ -12,7 +12,7 @@ const ReviewDocumentsButton = ({ onClick, disabled = false }) => {
       onClick={onClick}
       disabled={disabled}
       title="Review my visa documents"
-      className="flex items-center gap-2 px-4 py-2 rounded-xl border border-premium-gold/30 text-premium-gold hover:bg-premium-gold/10 transition-all text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+      className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gold/30 text-gold hover:bg-amber-50 transition-all text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

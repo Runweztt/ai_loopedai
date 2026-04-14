@@ -12,67 +12,50 @@
   padding: 0;
 }
 
-/* ── Hide all scrollbars (scroll still works) ──────────────────────── */
+/* ── Hide scrollbars (scroll still works) ──────────────────────────── */
 * {
-  scrollbar-width: none;        /* Firefox */
-  -ms-overflow-style: none;     /* IE / Edge legacy */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-*::-webkit-scrollbar {
-  display: none;                /* Chrome / Safari / Webkit */
-}
+*::-webkit-scrollbar { display: none; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
-/* ── Page / step transitions ───────────────────────────────────────── */
+/* ── Animations ────────────────────────────────────────────────────── */
 @keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-
 @keyframes scaleIn {
   from { opacity: 0; transform: scale(0.97); }
   to   { opacity: 1; transform: scale(1); }
 }
 
-.animate-fade-slide-up {
-  animation: fadeSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
+.animate-fade-slide-up { animation: fadeSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-fade-in       { animation: fadeIn 0.25s ease both; }
+.animate-scale-in      { animation: scaleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-.animate-fade-in {
-  animation: fadeIn 0.25s ease both;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* Stagger child animations */
 .animate-fade-slide-up:nth-child(1) { animation-delay: 0ms; }
-.animate-fade-slide-up:nth-child(2) { animation-delay: 60ms; }
-.animate-fade-slide-up:nth-child(3) { animation-delay: 120ms; }
+.animate-fade-slide-up:nth-child(2) { animation-delay: 70ms; }
+.animate-fade-slide-up:nth-child(3) { animation-delay: 140ms; }
 
-/* Global smooth transitions for interactive elements */
+/* ── Interactive transitions ───────────────────────────────────────── */
 button, a, input, select, textarea {
   transition-property: color, background-color, border-color, box-shadow, opacity, transform;
-  transition-duration: 180ms;
+  transition-duration: 160ms;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
+button:active:not(:disabled) { transform: scale(0.98); }
 
-button:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
+/* ── Body ──────────────────────────────────────────────────────────── */
 body {
   font-family: 'Inter', sans-serif;
-  background: #050B1B;
-  color: #f1f5f9;
+  background: #FFFFFF;
+  color: #111827;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -81,32 +64,40 @@ body {
 }
 
 @media (pointer: fine) {
-  * {
-    cursor: none !important;
-  }
+  * { cursor: none !important; }
 }
 
 ::selection {
-  background: #E9B308;
-  color: #050B1B;
+  background: #D4A017;
+  color: #FFFFFF;
 }
 
+/* ── Utilities ─────────────────────────────────────────────────────── */
+
+/* Glass — light surface */
 .glass {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
 }
 
-/* Gradient text utility */
+/* Gold-to-black gradient text */
 .text-gradient {
-  background: linear-gradient(135deg, #ffffff 0%, #E9B308 100%);
+  background: linear-gradient(135deg, #D4A017 0%, #111827 60%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Responsive navbar logo */
+/* Subtle divider line */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.08), transparent);
+}
+
+/* ── Navbar logo (sprite crop) ─────────────────────────────────────── */
 .nav-logo {
   width: 140px;
   height: 36px;
@@ -115,7 +106,6 @@ body {
   background-position: -25px -74px;
   background-repeat: no-repeat;
 }
-
 @media (min-width: 768px) {
   .nav-logo {
     width: 215px;
@@ -125,12 +115,70 @@ body {
   }
 }
 
-/* Noise texture overlay */
-.noise::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  opacity: 0.4;
+/* ── Card base ─────────────────────────────────────────────────────── */
+.card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05);
+  transition: box-shadow 250ms ease, border-color 250ms ease, transform 250ms ease;
+}
+.card:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.09);
+  border-color: #D1D5DB;
+}
+
+/* ── Gold pill / badge ─────────────────────────────────────────────── */
+.badge-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FEF3C7;
+  border: 1px solid rgba(212, 160, 23, 0.35);
+  color: #92400E;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 999px;
+}
+
+/* ── Button base variants ──────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #D4A017;
+  color: #111827;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 11px 22px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 2px 8px rgba(212,160,23,0.25);
+  border: 1px solid rgba(212,160,23,0.4);
+}
+.btn-primary:hover {
+  background: #B8860B;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.10), 0 4px 12px rgba(212,160,23,0.3);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #D1D5DB;
+}
+.btn-secondary:hover {
+  background: #F9FAFB;
+  border-color: #9CA3AF;
+  color: #111827;
 }

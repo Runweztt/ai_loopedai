@@ -5,25 +5,25 @@ const LAST_UPDATED = 'April 9, 2026'
 
 const Section = ({ title, children }) => (
   <div className="mb-10">
-    <h2 className="text-lg font-semibold text-white mb-3">{title}</h2>
-    <div className="text-white/50 text-sm leading-relaxed space-y-3">{children}</div>
+    <h2 className="text-lg font-semibold text-gray-900 mb-3">{title}</h2>
+    <div className="text-gray-500 text-sm leading-relaxed space-y-3">{children}</div>
   </div>
 )
 
 export default function PrivacyPage() {
   return (
-    <div className="pt-24 bg-void min-h-screen text-white">
+    <div className="pt-24 bg-white min-h-screen text-gray-900">
 
       {/* Header */}
       <section className="max-w-3xl mx-auto px-6 lg:px-10 py-12">
-        <p className="text-xs text-white/30 uppercase tracking-widest mb-4">Legal</p>
+        <p className="text-xs text-gray-400 uppercase tracking-widest mb-4">Legal</p>
         <h1 className="text-3xl md:text-4xl font-display font-bold mb-4">Privacy Policy</h1>
-        <p className="text-white/30 text-sm">Last updated: {LAST_UPDATED}</p>
+        <p className="text-gray-400 text-sm">Last updated: {LAST_UPDATED}</p>
       </section>
 
       {/* Body */}
       <section className="max-w-3xl mx-auto px-6 lg:px-10 pb-20">
-        <div className="bg-white/3 border border-white/8 rounded-2xl p-8 md:p-10">
+        <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 md:p-10 shadow-card">
 
           <Section title="1. Who we are">
             <p>
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
               across 180+ countries. We are not a law firm and nothing on our platform constitutes
               legal advice.
             </p>
-            <p>Contact: <a href="mailto:info@loopedai.io" className="text-premium-gold hover:underline">info@loopedai.io</a></p>
+            <p>Contact: <a href="mailto:info@loopedai.io" className="text-gold hover:underline">info@loopedai.io</a></p>
           </Section>
 
           <Section title="2. Information we collect">
@@ -59,16 +59,16 @@ export default function PrivacyPage() {
               <li>To detect and prevent fraud, abuse, and security incidents</li>
               <li>To comply with legal obligations</li>
             </ul>
-            <p>We do <strong className="text-white">not</strong> use your data to train AI models, sell to advertisers, or share with data brokers.</p>
+            <p>We do <strong className="text-gray-900">not</strong> use your data to train AI models, sell to advertisers, or share with data brokers.</p>
           </Section>
 
           <Section title="4. Data sharing">
             <p>We share your data only with trusted sub-processors necessary to run the service:</p>
             <ul className="list-disc list-inside space-y-1 pl-2">
-              <li><strong className="text-white/70">Cloud database provider</strong> — your account data and query history are stored on secure, hosted infrastructure</li>
-              <li><strong className="text-white/70">AI processing provider</strong> — the text of your immigration queries is sent to our AI infrastructure to generate responses; it is not used to train models or shared further</li>
-              <li><strong className="text-white/70">Stripe</strong> — payment processing (we never receive or store your card details)</li>
-              <li><strong className="text-white/70">Telegram</strong> — if you choose to link your account, messages you send via Telegram are routed through their platform to reach our service</li>
+              <li><strong className="text-gray-700">Cloud database provider</strong> — your account data and query history are stored on secure, hosted infrastructure</li>
+              <li><strong className="text-gray-700">AI processing provider</strong> — the text of your immigration queries is sent to our AI infrastructure to generate responses; it is not used to train models or shared further</li>
+              <li><strong className="text-gray-700">Stripe</strong> — payment processing (we never receive or store your card details)</li>
+              <li><strong className="text-gray-700">Telegram</strong> — if you choose to link your account, messages you send via Telegram are routed through their platform to reach our service</li>
             </ul>
             <p>We will disclose information if required by law or to protect the safety of users and the platform.</p>
           </Section>
@@ -100,7 +100,7 @@ export default function PrivacyPage() {
             </ul>
             <p>
               To exercise any of these rights, email{' '}
-              <a href="mailto:info@loopedai.io" className="text-premium-gold hover:underline">info@loopedai.io</a>.
+              <a href="mailto:info@loopedai.io" className="text-gold hover:underline">info@loopedai.io</a>.
               We will respond within 30 days.
             </p>
           </Section>
@@ -110,7 +110,7 @@ export default function PrivacyPage() {
               We encrypt all data in transit, store passwords using one-way cryptographic hashing,
               issue short-lived session credentials that are invalidated on logout, and apply rate
               limiting across all sensitive endpoints. For more detail see our{' '}
-              <Link to="/safety" className="text-premium-gold hover:underline">Safety page</Link>.
+              <Link to="/safety" className="text-gold hover:underline">Safety page</Link>.
             </p>
           </Section>
 
@@ -132,7 +132,7 @@ export default function PrivacyPage() {
           <Section title="11. Contact">
             <p>
               Questions about this policy?{' '}
-              <a href="mailto:info@loopedai.io" className="text-premium-gold hover:underline">info@loopedai.io</a>
+              <a href="mailto:info@loopedai.io" className="text-gold hover:underline">info@loopedai.io</a>
             </p>
           </Section>
 

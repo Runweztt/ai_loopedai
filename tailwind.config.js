@@ -4,18 +4,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        void:           '#050B1B',
-        navy:           '#0D1526',
-        'navy-light':   '#1A2540',
+        // ── Base surfaces ─────────────────────────────────────────────
+        void:           '#FFFFFF',      // page background
+        navy:           '#F9FAFB',      // subtle card / alt-section bg
+        'navy-light':   '#F3F4F6',      // deeper surface / hover
+        // ── Brand ─────────────────────────────────────────────────────
         'blue-brand':   '#1D45BF',
         'blue-muted':   '#2A3F8F',
-        gold:           '#E9B308',
-        'gold-muted':   '#A07C06',
-        'slate-text':   '#94A3B8',
-        'slate-dim':    '#475569',
-        // App/chat UI tokens — aliases for the tokens above
-        'premium-gold': '#E9B308',
-        'premium-dark': '#050B1B',
+        gold:           '#D4A017',      // richer, more professional gold
+        'gold-muted':   '#B8860B',
+        'gold-light':   '#FEF3C7',      // pale gold tint for badges
+        // ── Text ──────────────────────────────────────────────────────
+        'slate-text':   '#6B7280',      // body secondary text
+        'slate-dim':    '#9CA3AF',      // muted / disabled text
+        // ── App / chat UI tokens ─────────────────────────────────────
+        'premium-gold': '#D4A017',
+        'premium-dark': '#0A0A0A',
         'premium-blue': '#1D45BF',
       },
       fontFamily: {
@@ -48,7 +52,7 @@ export default {
         },
         glowPulse: {
           '0%, 100%': { opacity: '0.4' },
-          '50%':      { opacity: '0.8' },
+          '50%':      { opacity: '0.9' },
         },
         blink: {
           '0%, 100%': { opacity: '1' },
@@ -66,9 +70,13 @@ export default {
         },
       },
       boxShadow: {
-        'gold-glow': '0 0 40px rgba(233,179,8,0.15)',
-        'blue-glow': '0 0 60px rgba(29,69,191,0.2)',
-        'card':      '0 1px 3px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.3)',
+        'gold-glow': '0 0 0 1px rgba(212,160,23,0.3), 0 4px 12px rgba(212,160,23,0.2)',
+        'blue-glow': '0 0 60px rgba(29,69,191,0.15)',
+        // Card shadows — proper depth for white background
+        'card':      '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06)',
+        'card-hover':'0 2px 4px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.10)',
+        'nav':       '0 1px 0 rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05)',
+        'btn':       '0 1px 2px rgba(0,0,0,0.08), 0 2px 8px rgba(212,160,23,0.25)',
       },
     },
   },

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ArrowRight } from 'lucide-react'
 import logo from '../../assets/logo-06.png'
 
 const NAV_LINKS = [
@@ -25,104 +25,113 @@ function useIsSignedIn() {
 }
 
 export default function Navbar() {
-  const [open,      setOpen]      = useState(false)
-  const [scrolled,  setScrolled]  = useState(false)
-  const { pathname }              = useLocation()
-  const signedIn                  = useIsSignedIn()
+  const [open,     setOpen]     = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const { pathname }            = useLocation()
+  const signedIn                = useIsSignedIn()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Close mobile menu on route change
   useEffect(() => { setOpen(false) }, [pathname])
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-      scrolled || open ? 'bg-void/95 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-200 ${
+      scrolled || open
+        ? 'bg-white shadow-nav border-b border-gray-200'
+        : 'bg-white border-b border-gray-100'
     }`}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-[72px]">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-[68px]">
 
-        {/* Logo */}
-        <Link to="/" className="flex items-center select-none group">
+        {/* ── Logo ─────────────────────────────────────────────────── */}
+        <Link to="/" className="flex items-center select-none flex-shrink-0">
           <div
-            role="img" aria-label="LoopedAI"
+            role="img"
+            aria-label="LoopedAI"
             className="nav-logo"
             style={{ backgroundImage: `url(${logo})` }}
           />
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map(l => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className={`px-4 py-2 rounded-md text-sm font-body font-medium transition-all duration-200 ${
-                pathname === l.to
-                  ? 'text-white bg-white/8'
-                  : 'text-slate-text hover:text-white hover:bg-white/5'
-              }`}
-            >
-              {l.label}
-            </Link>
-          ))}
+        {/* ── Desktop nav links ─────────────────────────────────────── */}
+        <div className="hidden md:flex items-center gap-0.5">
+          {NAV_LINKS.map(l => {
+            const isActive = pathname === l.to
+            return (
+              <Link
+                key={l.to}
+                to={l.to}
+                className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-150 ${
+                  isActive
+                    ? 'text-gray-900 bg-gray-100'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                {l.label}
+                {/* Gold underline on active */}
+                {isActive && (
+                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-gold rounded-full" />
+                )}
+              </Link>
+            )
+          })}
         </div>
 
-        {/* CTA */}
+        {/* ── CTA button ───────────────────────────────────────────── */}
         <div className="hidden md:flex items-center gap-3">
-          {signedIn ? (
-            <Link
-              to="/chat"
-              className="flex items-center gap-2 bg-gold text-void text-sm font-body font-semibold px-5 py-2.5 rounded-md hover:bg-gold/90 transition-all duration-200 shadow-gold-glow"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              Back to Chat
-            </Link>
-          ) : (
-            <Link
-              to="/chat"
-              className="flex items-center gap-2 bg-gold text-void text-sm font-body font-semibold px-5 py-2.5 rounded-md hover:bg-gold/90 transition-all duration-200 shadow-gold-glow"
-            >
-              Start for free
-            </Link>
-          )}
+          <Link
+            to="/chat"
+            className="inline-flex items-center gap-2 bg-gold text-gray-900 text-sm font-semibold px-5 py-2.5 rounded-lg shadow-btn hover:bg-gold-muted transition-all duration-150"
+          >
+            {signedIn ? 'Back to Chat' : 'Start for free'}
+            <ArrowRight size={14} strokeWidth={2.5} />
+          </Link>
         </div>
 
-        {/* Mobile toggle */}
+        {/* ── Mobile toggle ────────────────────────────────────────── */}
         <button
-          className="md:hidden w-9 h-9 flex items-center justify-center rounded-md text-slate-text hover:text-white hover:bg-white/5 transition-colors"
+          className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
           onClick={() => setOpen(!open)}
+          aria-label={open ? 'Close menu' : 'Open menu'}
         >
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* ── Mobile menu ──────────────────────────────────────────────── */}
       {open && (
-        <div className="md:hidden border-t border-white/5 bg-void/98 backdrop-blur-xl">
+        <div className="md:hidden border-t border-gray-100 bg-white">
           <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1">
-            {NAV_LINKS.map(l => (
+            {NAV_LINKS.map(l => {
+              const isActive = pathname === l.to
+              return (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className={`flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'text-gray-900 bg-gray-100 font-semibold'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  {l.label}
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-gold" />}
+                </Link>
+              )
+            })}
+
+            <div className="pt-3 border-t border-gray-100 mt-1">
               <Link
-                key={l.to}
-                to={l.to}
-                className={`px-4 py-3 rounded-md text-sm font-medium transition-colors ${
-                  pathname === l.to ? 'text-white bg-white/8' : 'text-slate-text hover:text-white'
-                }`}
+                to="/chat"
+                className="flex items-center justify-center gap-2 bg-gold text-gray-900 text-sm font-semibold px-5 py-3.5 rounded-lg shadow-btn hover:bg-gold-muted transition-all"
               >
-                {l.label}
+                {signedIn ? 'Back to Chat' : 'Start for free'}
+                <ArrowRight size={14} strokeWidth={2.5} />
               </Link>
-            ))}
-            <Link
-              to="/chat"
-              className="mt-2 bg-gold text-void text-sm font-semibold px-5 py-3 rounded-md text-center hover:bg-gold/90 transition-colors"
-            >
-              {signedIn ? 'Back to Chat' : 'Start for free'}
-            </Link>
+            </div>
           </div>
         </div>
       )}

@@ -118,22 +118,22 @@ function PromptCard({ prompt }) {
   }
 
   return (
-    <div ref={ref} className="bg-navy border border-white/6 rounded-xl p-6 hover:border-white/12 transition-colors group">
+    <div ref={ref} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-card hover:shadow-card-hover hover:border-gray-200 transition-all duration-250 group">
       <div className="flex justify-between items-start gap-3 mb-4">
-        <h3 className="font-display font-bold text-white text-sm leading-snug">{prompt.title}</h3>
+        <h3 className="font-display font-bold text-gray-900 text-sm leading-snug">{prompt.title}</h3>
         <button
           onClick={copy}
           data-hover
-          className="shrink-0 p-1.5 rounded-md border border-white/8 text-slate-dim hover:border-gold/40 hover:text-gold transition-colors"
+          className="shrink-0 p-1.5 rounded-md border border-gray-200 text-gray-400 hover:border-gold/40 hover:text-gold transition-colors"
           title="Copy prompt"
         >
-          {copied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+          {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
         </button>
       </div>
-      <div className="bg-[#070F1E] border border-white/6 rounded-lg p-4 mb-4 font-mono text-xs text-slate-text leading-relaxed">
+      <div className="bg-[#070F1E] border border-white/6 rounded-lg p-4 mb-4 font-mono text-xs text-gray-300 leading-relaxed">
         {prompt.prompt}
       </div>
-      <p className="text-[11px] text-slate-dim">💡 {prompt.tip}</p>
+      <p className="text-[11px] text-gray-400">💡 {prompt.tip}</p>
     </div>
   )
 }
@@ -144,22 +144,19 @@ export default function GuidePage() {
   const current = CATEGORIES.find(c => c.id === active)
 
   return (
-    <div className="pt-16 bg-void min-h-screen">
+    <div className="pt-16 bg-white min-h-screen">
       {/* Hero */}
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 md:py-24">
         <div ref={heroRef} className="max-w-2xl">
-          <p className="text-xs font-body font-semibold uppercase tracking-[0.2em] text-gold mb-4">Prompt Guide</p>
-          <h1 className="font-display font-extrabold text-4xl md:text-6xl text-white leading-tight mb-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold mb-3">Prompt Guide</p>
+          <h1 className="font-display font-extrabold text-4xl md:text-6xl text-gray-900 leading-tight mb-5">
             Get better answers<br />
-            <span className="font-serif italic text-slate-text">from LoopedAI</span>
+            <span className="font-serif italic text-gray-400">from LoopedAI</span>
           </h1>
-          <p className="text-slate-text text-base leading-relaxed mb-8">
+          <p className="text-gray-500 text-base leading-relaxed mb-8">
             The quality of your answer depends on the quality of your question. Use these templates as a starting point — replace the brackets and go.
           </p>
-          <Link
-            to="/chat"
-            className="inline-flex items-center gap-2 bg-gold text-void font-body font-semibold text-sm px-6 py-3 rounded-md hover:bg-gold/90 transition-colors group"
-          >
+          <Link to="/chat" className="btn-primary group">
             Open Chat
             <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
           </Link>
@@ -168,7 +165,7 @@ export default function GuidePage() {
 
       {/* How to use */}
       <div className="max-w-7xl mx-auto px-6 lg:px-10 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-navy border border-white/6 rounded-xl p-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-gray-50 border border-gray-100 rounded-2xl p-6 mb-12 shadow-card">
           {[
             ['Pick a template', 'Choose a prompt category below that matches your situation.'],
             ['Fill in the brackets', 'Replace [placeholders] with your actual details — nationality, country, visa type.'],
@@ -176,10 +173,10 @@ export default function GuidePage() {
             ['Ask follow-ups', 'Drill deeper with follow-up questions. The first answer is rarely the last.'],
           ].map(([title, desc], i) => (
             <div key={i} className="flex gap-3">
-              <span className="font-mono text-xs text-gold/60 mt-0.5 shrink-0">{String(i + 1).padStart(2, '0')}</span>
+              <span className="font-mono text-xs text-gold/70 mt-0.5 shrink-0">{String(i + 1).padStart(2, '0')}</span>
               <div>
-                <p className="font-display font-bold text-white text-sm mb-1">{title}</p>
-                <p className="text-xs text-slate-text leading-relaxed">{desc}</p>
+                <p className="font-display font-bold text-gray-900 text-sm mb-1">{title}</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
               </div>
             </div>
           ))}
@@ -192,10 +189,10 @@ export default function GuidePage() {
               key={cat.id}
               onClick={() => setActive(cat.id)}
               data-hover
-              className={`text-xs font-body font-medium px-4 py-2 rounded-full border transition-all duration-200 ${
+              className={`text-xs font-medium px-4 py-2 rounded-full border transition-all duration-200 ${
                 active === cat.id
-                  ? 'border-gold bg-gold/10 text-gold'
-                  : 'border-white/8 text-slate-text hover:border-white/20 hover:text-white'
+                  ? 'border-gold bg-amber-50 text-gold'
+                  : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-900'
               }`}
             >
               {cat.label}
@@ -209,8 +206,8 @@ export default function GuidePage() {
         </div>
 
         {/* Pro tips */}
-        <div className="bg-navy border border-white/6 rounded-xl p-8">
-          <h2 className="font-display font-bold text-white text-lg mb-6">Pro tips for sharper answers</h2>
+        <div className="bg-gray-50 border border-gray-100 rounded-2xl p-8 shadow-card">
+          <h2 className="font-display font-bold text-gray-900 text-lg mb-6">Pro tips for sharper answers</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
               ['Specify your nationality', 'Requirements differ dramatically by passport. Always include your citizenship.'],
@@ -223,8 +220,8 @@ export default function GuidePage() {
               <div key={i} className="flex gap-3">
                 <span className="text-gold mt-0.5 shrink-0 text-sm">◆</span>
                 <div>
-                  <p className="font-display font-bold text-white text-sm mb-1">{title}</p>
-                  <p className="text-xs text-slate-text leading-relaxed">{desc}</p>
+                  <p className="font-display font-bold text-gray-900 text-sm mb-1">{title}</p>
+                  <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
                 </div>
               </div>
             ))}
