@@ -37,21 +37,21 @@ jobs:
           VITE_SUPABASE_ANON_KEY:     ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_TELEGRAM_BOT_USERNAME: ${{ secrets.VITE_TELEGRAM_BOT_USERNAME }}
 
-      # 5. Upload dist/ directly to public_html via FTP
-      #    No git state, no divergence errors — just files.
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server:               ${{ secrets.FTP_SERVER }}
-          username:             ${{ secrets.FTP_USERNAME }}
-          password:             ${{ secrets.FTP_PASSWORD }}
-          local-dir:            ./dist/
-          server-dir:           /public_html/
-          dangerous-clean-slate: true
+      # 5. Upload dist/ to public_html via rsync over SSH (port 65002)
+      #    FTP is blocked by Hostinger's firewall — SSH always works.
+      - name: Deploy via SSH/rsync
+        run: |
+          sudo apt-get install -y sshpass
+          sshpass -p "$SSH_PASS" rsync -az --delete \
+            -e "ssh -o StrictHostKeyChecking=no -p 65002" \
+            dist/ \
+            ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:~/public_html/
+        env:
+          SSH_PASS: ${{ secrets.FTP_PASSWORD }}
 
       # 6. Summary
       - name: Deploy summary
         run: |
-          echo "✅ FTP deploy complete"
+          echo "✅ SSH/rsync deploy complete"
           echo "Commit : ${{ github.sha }}"
           echo "Time   : $(date -u '+%Y-%m-%d %H:%M UTC')"
