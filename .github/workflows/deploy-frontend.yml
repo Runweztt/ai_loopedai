@@ -7,16 +7,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  # ── 1. Build ────────────────────────────────────────────────────────────────
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
 
     steps:
-      # 1. Checkout source code
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Set up Node 20
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,11 +23,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 4. Build the Vite app
       - name: Build
         run: npm run build
         env:
@@ -37,22 +34,62 @@ jobs:
           VITE_SUPABASE_ANON_KEY:     ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_TELEGRAM_BOT_USERNAME: ${{ secrets.VITE_TELEGRAM_BOT_USERNAME }}
 
-      # 5. Upload dist/ to public_html via rsync over SSH (port 65002)
-      #    FTP is blocked by Hostinger's firewall — SSH always works.
-      - name: Deploy via SSH/rsync
+      # ── 2. Push dist/ to the deploy branch ──────────────────────────────────
+      # The deploy branch contains only the compiled output.
+      # The webhook receiver on the server pulls this branch to get the files.
+      - name: Publish dist/ to deploy branch
         env:
-          SSH_PASS: ${{ secrets.FTP_PASSWORD }}
-          SSH_HOST: ${{ secrets.FTP_SERVER }}
-          SSH_USER: ${{ secrets.FTP_USERNAME }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          sudo apt-get install -y sshpass
-          sshpass -p "$SSH_PASS" rsync -az --delete \
-            -e "ssh -o StrictHostKeyChecking=no -p 65002" \
-            dist/ "${SSH_USER}@${SSH_HOST}:~/public_html/"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 6. Summary
+          # Orphan the deploy branch so it holds only build artefacts
+          git checkout --orphan deploy
+          git reset --hard
+
+          # Move the compiled output to the repo root so Hostinger can serve it
+          cp -r dist/. .
+          rm -rf dist node_modules
+
+          git add -A
+          git commit -m "deploy: $(date -u '+%Y-%m-%d %H:%M UTC') @ ${{ github.sha }}"
+
+          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:deploy
+
+  # ── 3. Trigger webhook ──────────────────────────────────────────────────────
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping deploy webhook
+        run: |
+          HTTP_STATUS=$(curl -s -o /tmp/webhook_response.txt -w "%{http_code}" \
+            -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -H "X-Deploy-Secret: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}" \
+            --max-time 30 \
+            -d '{
+              "repo":   "${{ github.repository }}",
+              "branch": "deploy",
+              "ref":    "${{ github.ref }}",
+              "sha":    "${{ github.sha }}"
+            }')
+
+          echo "Webhook response (HTTP $HTTP_STATUS):"
+          cat /tmp/webhook_response.txt
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "❌ Webhook returned non-2xx status: $HTTP_STATUS"
+            exit 1
+          fi
+
+          echo "✅ Deploy webhook acknowledged"
+
       - name: Deploy summary
         run: |
-          echo "✅ SSH/rsync deploy complete"
           echo "Commit : ${{ github.sha }}"
           echo "Time   : $(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo "Branch : deploy (artefacts only)"
