@@ -43,9 +43,10 @@ jobs:
           SSH_USER: ${{ secrets.FTP_USERNAME }}
         run: |
           sudo apt-get install -y sshpass
-          # sshpass must be inside -e so rsync's SSH subprocess gets the password
+          # sshpass -e reads password from SSHPASS env var — no quoting issues
+          export SSHPASS="$SSH_PASS"
           rsync -az --delete \
-            -e "sshpass -p '$SSH_PASS' ssh -o StrictHostKeyChecking=no -p 65002" \
+            -e "sshpass -e ssh -o StrictHostKeyChecking=no -p 65002" \
             dist/ "${SSH_USER}@${SSH_HOST}:public_html/"
 
       # ── 3. Push dist/ to the deploy branch (audit trail) ────────────────────
