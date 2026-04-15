@@ -34,20 +34,21 @@ jobs:
           VITE_SUPABASE_ANON_KEY:     ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_TELEGRAM_BOT_USERNAME: ${{ secrets.VITE_TELEGRAM_BOT_USERNAME }}
 
-      # ── 2. Deploy dist/ to Hostinger via SSH/rsync ──────────────────────────
-      # Primary deployment — always runs so the live site is updated immediately.
-      - name: Deploy to Hostinger via rsync
+      # ── 2. Deploy dist/ to Hostinger via SFTP (lftp) ───────────────────────
+      # lftp handles password auth natively — no sshpass quoting issues.
+      - name: Deploy to Hostinger via lftp/SFTP
         env:
           SSH_PASS: ${{ secrets.FTP_PASSWORD }}
           SSH_HOST: ${{ secrets.FTP_SERVER }}
           SSH_USER: ${{ secrets.FTP_USERNAME }}
         run: |
-          sudo apt-get install -y sshpass
-          # sshpass -e reads password from SSHPASS env var — no quoting issues
-          export SSHPASS="$SSH_PASS"
-          rsync -az --delete \
-            -e "sshpass -e ssh -o StrictHostKeyChecking=no -p 65002" \
-            dist/ "${SSH_USER}@${SSH_HOST}:public_html/"
+          sudo apt-get install -y lftp
+          lftp -u "${SSH_USER},${SSH_PASS}" \
+               -e "set sftp:auto-confirm yes; \
+                   set net:max-retries 3; \
+                   mirror --reverse --delete --verbose dist/ public_html/; \
+                   bye" \
+               "sftp://${SSH_HOST}:65002"
 
       # ── 3. Push dist/ to the deploy branch (audit trail) ────────────────────
       # Keeps a deployable snapshot in git so the webhook receiver can pull it
