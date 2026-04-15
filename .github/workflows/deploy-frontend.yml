@@ -34,66 +34,68 @@ jobs:
           VITE_SUPABASE_ANON_KEY:     ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_TELEGRAM_BOT_USERNAME: ${{ secrets.VITE_TELEGRAM_BOT_USERNAME }}
 
-      # ── 2. Push dist/ to the deploy branch ──────────────────────────────────
-      # The deploy branch contains only the compiled output.
-      # The webhook receiver on the server pulls this branch to get the files.
+      # ── 2. Deploy dist/ to Hostinger via SSH/rsync ──────────────────────────
+      # Primary deployment — always runs so the live site is updated immediately.
+      - name: Deploy to Hostinger via rsync
+        env:
+          SSH_PASS: ${{ secrets.FTP_PASSWORD }}
+          SSH_HOST: ${{ secrets.FTP_SERVER }}
+          SSH_USER: ${{ secrets.FTP_USERNAME }}
+        run: |
+          sudo apt-get install -y sshpass
+          sshpass -p "$SSH_PASS" rsync -az --delete \
+            -e "ssh -o StrictHostKeyChecking=no -p 65002" \
+            dist/ "${SSH_USER}@${SSH_HOST}:~/public_html/"
+
+      # ── 3. Push dist/ to the deploy branch (audit trail) ────────────────────
+      # Keeps a deployable snapshot in git so the webhook receiver can pull it
+      # once it is set up. Safe to skip if GITHUB_TOKEN has no write perms.
       - name: Publish dist/ to deploy branch
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Orphan the deploy branch so it holds only build artefacts
           git checkout --orphan deploy
           git reset --hard
 
-          # Move the compiled output to the repo root so Hostinger can serve it
           cp -r dist/. .
           rm -rf dist node_modules
 
           git add -A
           git commit -m "deploy: $(date -u '+%Y-%m-%d %H:%M UTC') @ ${{ github.sha }}"
+          git push --force \
+            "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" \
+            HEAD:deploy
 
-          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:deploy
-
-  # ── 3. Trigger webhook (optional — skipped if DEPLOY_WEBHOOK_URL not set) ───
-  trigger-deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    timeout-minutes: 5
-
-    steps:
-      - name: Ping deploy webhook
+      # ── 4. Ping optional webhook ─────────────────────────────────────────────
+      - name: Ping deploy webhook (optional)
         env:
           WEBHOOK_URL:    ${{ secrets.DEPLOY_WEBHOOK_URL }}
           WEBHOOK_SECRET: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
         run: |
           if [ -z "$WEBHOOK_URL" ]; then
-            echo "⚠️  DEPLOY_WEBHOOK_URL secret not set — skipping webhook ping."
-            echo "    The deploy branch was updated successfully."
+            echo "⚠️  DEPLOY_WEBHOOK_URL not set — skipping webhook ping."
             exit 0
           fi
 
-          HTTP_STATUS=$(curl -s -o /tmp/webhook_response.txt -w "%{http_code}" \
+          HTTP_STATUS=$(curl -s -o /tmp/wh.txt -w "%{http_code}" \
             -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             -H "X-Deploy-Secret: $WEBHOOK_SECRET" \
             --max-time 30 \
-            -d "{\"repo\":\"${{ github.repository }}\",\"branch\":\"deploy\",\"ref\":\"${{ github.ref }}\",\"sha\":\"${{ github.sha }}\"}")
+            -d "{\"repo\":\"${{ github.repository }}\",\"branch\":\"deploy\",\"sha\":\"${{ github.sha }}\"}")
 
-          echo "Webhook response (HTTP $HTTP_STATUS):"
-          cat /tmp/webhook_response.txt
+          cat /tmp/wh.txt
+          [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ] \
+            && echo "✅ Webhook acknowledged" \
+            || { echo "❌ Webhook HTTP $HTTP_STATUS"; exit 1; }
 
-          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
-            echo "❌ Webhook returned non-2xx status: $HTTP_STATUS"
-            exit 1
-          fi
-
-          echo "✅ Deploy webhook acknowledged"
-
+      # ── 5. Summary ───────────────────────────────────────────────────────────
       - name: Deploy summary
         run: |
+          echo "✅ rsync deploy complete"
           echo "Commit : ${{ github.sha }}"
           echo "Time   : $(date -u '+%Y-%m-%d %H:%M UTC')"
-          echo "Branch : deploy (artefacts only)"
