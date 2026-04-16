@@ -47,6 +47,7 @@ function useSession() {
   const clear = () => {
     localStorage.removeItem(SESSION_KEY)
     localStorage.removeItem('immigration_ai_prompt_count')
+    localStorage.removeItem('loopedai_current_session')
     setUserData(null)
   }
 

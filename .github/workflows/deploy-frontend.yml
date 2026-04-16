@@ -40,7 +40,7 @@ jobs:
         with:
           host:     ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          key:      ${{ secrets.SSH_PRIVATE_KEY }}
           port:     65002
           script:   find ~/public_html -mindepth 1 -delete 2>/dev/null || true
 
@@ -50,7 +50,7 @@ jobs:
         with:
           host:             ${{ secrets.FTP_SERVER }}
           username:         ${{ secrets.FTP_USERNAME }}
-          password:         ${{ secrets.FTP_PASSWORD }}
+          key:              ${{ secrets.SSH_PRIVATE_KEY }}
           port:             65002
           source:           "dist/"
           target:           "public_html"
