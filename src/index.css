@@ -63,9 +63,6 @@ body {
   position: relative;
 }
 
-@media (pointer: fine) {
-  * { cursor: none !important; }
-}
 
 ::selection {
   background: #D4A017;

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Settings } from 'lucide-react';
 import PaywallModal from './PaywallModal';
 import ChatSidebar from './ChatSidebar';
 import ReviewDocumentsButton from './ReviewDocumentsButton';
@@ -17,7 +18,7 @@ const makeWelcome = (name) => ({
   text: `Hello ${name || 'there'}! I'm loopedai. Ask me anything about visas, permits, immigration policies, or relocation processes. How can I help you today?`,
 });
 
-const Dashboard = ({ userData, onLogout, onUpgrade }) => {
+const Dashboard = ({ userData, onLogout, onUpgrade, onSettings }) => {
   const navigate = useNavigate();
   const isDesktop = () => window.innerWidth >= 768;
 
@@ -203,7 +204,19 @@ const Dashboard = ({ userData, onLogout, onUpgrade }) => {
               {loadingSession && (
                 <div className="w-3 h-3 border border-gold/40 border-t-gold rounded-full animate-spin" />
               )}
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse hidden md:block" />
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse hidden md:block" />
+                {onSettings && (
+                  <button
+                    onClick={onSettings}
+                    className="w-9 h-9 flex items-center justify-center text-black/45 hover:text-black/80 hover:bg-black/8 rounded-xl transition-all border border-black/10 hover:border-black/20"
+                    title="Account settings"
+                    aria-label="Account settings"
+                  >
+                    <Settings size={17} />
+                  </button>
+                )}
+              </div>
               {userData?.is_admin && (
                 <a
                   href="/admin"

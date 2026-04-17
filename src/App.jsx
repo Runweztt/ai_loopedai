@@ -3,24 +3,25 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import { API_BASE } from './constants'
 
-import CustomCursor   from './components/ui/CustomCursor'
-import Navbar         from './components/layout/Navbar'
-import Footer         from './components/layout/Footer'
-import Home           from './pages/Home'
-import AboutPage      from './pages/AboutPage'
-import ServicesPage   from './pages/ServicesPage'
-import GuidePage      from './pages/GuidePage'
-import AdminDashboard from './pages/AdminDashboard'
-import SafetyPage    from './pages/SafetyPage'
-import PrivacyPage   from './pages/PrivacyPage'
+import Navbar             from './components/layout/Navbar'
+import Footer             from './components/layout/Footer'
+import Home               from './pages/Home'
+import AboutPage          from './pages/AboutPage'
+import ServicesPage       from './pages/ServicesPage'
+import GuidePage          from './pages/GuidePage'
+import AdminDashboard     from './pages/AdminDashboard'
+import SafetyPage         from './pages/SafetyPage'
+import PrivacyPage        from './pages/PrivacyPage'
+import AccountSettingsPage from './pages/AccountSettingsPage'
 
-import RegistrationForm    from './components/RegistrationForm'
-import LoginForm           from './components/LoginForm'
-import SuccessPage         from './components/SuccessPage'
-import Dashboard           from './components/Dashboard'
-import PaymentPage         from './components/PaymentPage'
-import PremiumSuccessCard  from './components/PremiumSuccessCard'
-import Layout              from './components/Layout'
+import RegistrationForm   from './components/RegistrationForm'
+import LoginForm          from './components/LoginForm'
+import SuccessPage        from './components/SuccessPage'
+import Dashboard          from './components/Dashboard'
+import PaymentPage        from './components/PaymentPage'
+import PremiumSuccessCard from './components/PremiumSuccessCard'
+import Layout             from './components/Layout'
+import CookieBanner       from './components/CookieBanner'
 
 const SESSION_KEY = 'immigration_ai_session'
 
@@ -206,6 +207,14 @@ function ChatApp() {
 
   const handleLogout = () => { clearUserData(); setStep('auth'); setAuthView('login') }
 
+  // Called by AccountSettingsPage after a successful profile save.
+  // Merges updated fields into the stored session without a full re-login.
+  const handleProfileUpdate = (updates) => {
+    if (!userData) return
+    const next = { ...userData, ...updates }
+    setUserData(next)
+  }
+
   // Don't render anything until localStorage has been read — prevents the
   // login form flashing briefly before the session redirects to dashboard.
   if (!ready) {
@@ -222,7 +231,7 @@ function ChatApp() {
   const transitionKey = oauthLoading ? 'oauth-loading' : step === 'auth' ? `auth-${authView}` : step
 
   return (
-    <Layout isFullWidth={step === 'dashboard'}>
+    <Layout isFullWidth={step === 'dashboard' || step === 'settings'}>
       <StepTransition stepKey={transitionKey} fullHeight={step === 'dashboard'}>
         {oauthLoading && (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -264,7 +273,20 @@ function ChatApp() {
           />
         )}
         {step === 'dashboard' && (
-          <Dashboard userData={userData} onLogout={handleLogout} onUpgrade={() => setStep('payment')} />
+          <Dashboard
+            userData={userData}
+            onLogout={handleLogout}
+            onUpgrade={() => setStep('payment')}
+            onSettings={() => setStep('settings')}
+          />
+        )}
+        {step === 'settings' && (
+          <AccountSettingsPage
+            userData={userData}
+            onBack={() => setStep('dashboard')}
+            onProfileUpdate={handleProfileUpdate}
+            onLogout={handleLogout}
+          />
         )}
         {step === 'payment' && (
           <PaymentPage
@@ -343,7 +365,6 @@ function MarketingLayout() {
 export default function App() {
   return (
     <BrowserRouter>
-      <CustomCursor />
       <div
         className="fixed inset-0 pointer-events-none z-[9997]"
         style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px)' }}
@@ -353,6 +374,8 @@ export default function App() {
         <Route path="/admin" element={<AdminApp />} />
         <Route path="/*"     element={<MarketingLayout />} />
       </Routes>
+      {/* Cookie/storage notice — shown once, dismissed via localStorage */}
+      <CookieBanner />
     </BrowserRouter>
   )
 }
