@@ -95,6 +95,8 @@ const ModalHeader = ({ title, subtitle }) => (
 
 // ── Main Component ────────────────────────────────────────────────────
 
+const SESSION_KEY = 'loopedai_review_id';
+
 const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userData }) => {
   const [step, setStep] = useState('details');
 
@@ -121,6 +123,18 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
 
   // Step 6: report
   const [report, setReport] = useState(null);
+
+  // On mount: resume an in-progress review if reviewId is in sessionStorage
+  useEffect(() => {
+    const savedId = sessionStorage.getItem(SESSION_KEY);
+    if (savedId && userData?.access_token) {
+      setReviewId(savedId);
+      setStep('progress');
+      setProgress({ percent: 0, step: 'Resuming review...' });
+      startPolling(savedId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Clean up polling timeout on unmount
   useEffect(() => {
@@ -211,6 +225,7 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
       }
 
       const data = await res.json();
+      sessionStorage.setItem(SESSION_KEY, data.review_id);
       setReviewId(data.review_id);
       startPolling(data.review_id);
     } catch (e) {
@@ -233,12 +248,18 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
           setProgress({ percent: data.progress_percent, step: data.current_step });
 
           if (data.status === 'complete' && data.report) {
-            setReport(data.report);
-            setStep('report');
-            if (onReportReady) onReportReady(data.report, country, visaType);
-            return; // stop — no next timeout
+            // Show 100% briefly so the user sees all stages complete before the report appears
+            setProgress({ percent: 100, step: 'Review complete' });
+            sessionStorage.removeItem(SESSION_KEY);
+            pollRef.current = setTimeout(() => {
+              setReport(data.report);
+              setStep('report');
+              if (onReportReady) onReportReady(data.report, country, visaType);
+            }, 900);
+            return; // stop polling — transition timeout scheduled above
           }
           if (data.status === 'failed') {
+            sessionStorage.removeItem(SESSION_KEY);
             setReviewError('We could not complete the document review. Please try again or contact support at info@loopedai.io.');
             setStep('upload');
             return; // stop — no next timeout
@@ -613,7 +634,7 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
           </div>
           <div className="px-4 pb-4 pt-2 flex gap-3">
             <button
-              onClick={() => { setStep('upload'); setFiles([]); setReport(''); }}
+              onClick={() => { sessionStorage.removeItem(SESSION_KEY); setStep('upload'); setFiles([]); setReport(''); }}
               className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-600 font-semibold py-2.5 rounded-xl transition-all text-sm border border-gray-200"
             >
               New Review
