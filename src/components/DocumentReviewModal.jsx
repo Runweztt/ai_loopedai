@@ -18,9 +18,30 @@ const STEPS = ['details', 'checklist', 'upload', 'progress', 'report'];
 const ACCEPTED_TYPES = '.pdf,.docx,.jpg,.jpeg,.png';
 const MAX_FILES = 10;
 
-const POLL_INITIAL_MS = 3000;   // first poll after 3 s
-const POLL_MAX_MS     = 30000;  // cap at 30 s between polls
-const POLL_BACKOFF    = 1.6;    // multiply interval each cycle
+const POLL_INITIAL_MS = 3000;
+const POLL_MAX_MS     = 30000;
+const POLL_BACKOFF    = 1.6;
+
+// Ordered stages mapped to real backend progress_percent thresholds.
+// A stage is COMPLETED when percent >= completedAt.
+// A stage is ACTIVE   when percent >= prevCompletedAt && percent < completedAt.
+const REVIEW_STAGES = [
+  { key: 'uploading',   label: 'Uploading documents',              completedAt: 5  },
+  { key: 'extracting',  label: 'Extracting document text',          completedAt: 9  },
+  { key: 'researching', label: 'Researching official requirements',  completedAt: 11 },
+  { key: 'checklist',   label: 'Building document checklist',        completedAt: 31 },
+  { key: 'reviewing',   label: 'Reviewing your documents',           completedAt: 56 },
+  { key: 'advice',      label: 'Generating improvement advice',      completedAt: 76 },
+  { key: 'compiling',   label: 'Compiling final report',             completedAt: 91 },
+];
+
+const getStageStatus = (stageIndex, percent) => {
+  const stage = REVIEW_STAGES[stageIndex];
+  const prevAt = stageIndex === 0 ? 0 : REVIEW_STAGES[stageIndex - 1].completedAt;
+  if (percent >= stage.completedAt) return 'completed';
+  if (percent >= prevAt)            return 'active';
+  return 'pending';
+};
 
 // ── Sub-components ────────────────────────────────────────────────────
 
@@ -516,51 +537,70 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
       {step === 'progress' && (
         <>
           <ModalHeader
-            title="Reviewing Your Documents..."
+            title="Reviewing Your Documents"
             subtitle="Our AI agents are analyzing your application. This typically takes 2–4 minutes."
           />
-          <div className="px-6 py-8 flex flex-col items-center gap-6">
+          <div className="px-6 py-6 flex flex-col gap-5">
+
             {/* Progress bar */}
-            <div className="w-full">
-              <div className="flex justify-between text-xs text-gray-400 mb-2">
-                <span>{progress.step}</span>
-                <span>{progress.percent}%</span>
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-medium text-gray-500">{progress.step}</span>
+                <span className="text-xs font-semibold text-gold tabular-nums">{progress.percent}%</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
+              <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
                 <div
-                  className="bg-gold rounded-full h-2 transition-all duration-700"
-                  style={{ width: `${progress.percent}%` }}
+                  className="h-2.5 rounded-full transition-all duration-700 ease-in-out"
+                  style={{
+                    width: `${progress.percent}%`,
+                    background: 'linear-gradient(90deg, #D4A017, #F5C842)',
+                  }}
                 />
               </div>
             </div>
-            {progress.percent > 0 && progress.percent < 100 && (
-              <p className="text-xs text-gray-400 text-center">
-                Please keep this window open — closing it will not cancel the review, but you will need to refresh to see results.
-              </p>
-            )}
 
-            {/* Agent steps */}
-            {[
-              'Fetching official requirements...',
-              'Building document checklist...',
-              'Reviewing your documents...',
-              'Generating improvement advice...',
-              'Compiling final report...',
-            ].map((label, i) => {
-              const stepPct = (i + 1) * 20;
-              const done = progress.percent >= stepPct;
-              const active = progress.percent >= stepPct - 15 && progress.percent < stepPct;
-              return (
-                <div key={i} className={`flex items-center gap-3 w-full text-sm transition-all ${done ? 'text-emerald-600' : active ? 'text-gray-800' : 'text-gray-300'}`}>
-                  <span className="flex-shrink-0">
-                    {done ? '✓' : active ? (
-                      <span className="inline-block w-3 h-3 border-2 border-gold border-t-transparent rounded-full animate-spin" />
-                    ) : '○'}
-                  </span>
-                  {label}
-                </div>
-              );
-            })}
+            {/* Stage list */}
+            <div className="flex flex-col gap-1.5">
+              {REVIEW_STAGES.map((stage, i) => {
+                const status = getStageStatus(i, progress.percent);
+                return (
+                  <div
+                    key={stage.key}
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-300 ${
+                      status === 'active'    ? 'bg-amber-50 border border-gold/20'  :
+                      status === 'completed' ? 'bg-emerald-50/60 border border-emerald-100' :
+                                              'border border-transparent'
+                    }`}
+                  >
+                    {/* Icon */}
+                    <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                      {status === 'completed' ? (
+                        <svg className="w-4 h-4 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clipRule="evenodd" />
+                        </svg>
+                      ) : status === 'active' ? (
+                        <span className="w-3.5 h-3.5 border-2 border-gold border-t-transparent rounded-full animate-spin block" />
+                      ) : (
+                        <span className="w-3 h-3 rounded-full border-2 border-gray-200 block" />
+                      )}
+                    </span>
+
+                    {/* Label */}
+                    <span className={`text-sm transition-colors duration-300 ${
+                      status === 'active'    ? 'text-gray-900 font-semibold' :
+                      status === 'completed' ? 'text-emerald-700 font-medium' :
+                                              'text-gray-300'
+                    }`}>
+                      {stage.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <p className="text-[11px] text-gray-400 text-center leading-relaxed pb-1">
+              Closing this window won't cancel the review — you can reopen it to see results.
+            </p>
           </div>
         </>
       )}
