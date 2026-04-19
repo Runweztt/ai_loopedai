@@ -74,7 +74,7 @@ const PaymentPage = ({ onBack, userData }) => {
             Redirecting to Stripe…
           </>
         ) : (
-          'Subscribe — £9.99 / month'
+          'Subscribe — $20 / month'
         )}
       </button>
 

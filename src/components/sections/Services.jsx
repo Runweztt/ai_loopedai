@@ -1,5 +1,5 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal'
-import { Search, FileText, CalendarDays, BarChart3, ListChecks, Users } from 'lucide-react'
+import { Search, FileText, CalendarDays, BarChart3, ListChecks, Bell } from 'lucide-react'
 
 const SERVICES = [
   {
@@ -48,13 +48,13 @@ const SERVICES = [
     tagBg: 'bg-cyan-50 text-cyan-700',
   },
   {
-    icon: Users,
-    title: 'Lawyer Referrals',
-    desc: 'When you need human expertise, we connect you to vetted immigration lawyers in your destination country.',
-    tag: 'Expert network',
+    icon: Bell,
+    title: 'Daily Briefing',
+    desc: 'Receive an auto-generated intelligence brief every 2 days via Telegram — news, laws, jobs, and industry trends for your destination.',
+    tag: 'Via Telegram',
     iconBg: 'bg-rose-50',
-    iconColor: 'text-rose-600',
-    tagBg: 'bg-rose-50 text-rose-700',
+    iconColor: 'text-rose-500',
+    tagBg: 'bg-rose-50 text-rose-600',
   },
 ]
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Copy, Check, ArrowRight } from 'lucide-react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import SEO from '../components/SEO'
 import CTASection from '../components/sections/CTASection'
 
 const CATEGORIES = [

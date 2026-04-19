@@ -1,3 +1,4 @@
+import SEO from '../components/SEO'
 import CTASection from '../components/sections/CTASection'
 import { ShieldCheck, Zap, Globe2, Scale, Bot, FileSearch, Users, Clock, Star, ArrowRight } from 'lucide-react'
 
@@ -60,6 +61,11 @@ const TIMELINE = [
 export default function AboutPage() {
   return (
     <div className="pt-16 bg-white min-h-screen">
+      <SEO
+        title="About LoopedAI"
+        path="/about"
+        description="Learn how LoopedAI was built to make global immigration intelligence accessible to everyone — with AI agents reading official government sources in real time."
+      />
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <section className="py-24 md:py-32 relative overflow-hidden flex items-center justify-center">

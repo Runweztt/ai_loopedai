@@ -4,6 +4,8 @@ import { Settings } from 'lucide-react';
 import PaywallModal from './PaywallModal';
 import ChatSidebar from './ChatSidebar';
 import ReviewDocumentsButton from './ReviewDocumentsButton';
+import BriefingButton from './BriefingButton';
+import BriefingInfoModal from './BriefingInfoModal';
 import DocumentReviewModal from './DocumentReviewModal';
 import ReviewReportCard from './ReviewReportCard';
 import { API_BASE } from '../constants';
@@ -34,6 +36,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade, onSettings }) => {
 
   const isPremium = userData?.is_premium === true;
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showBriefingModal, setShowBriefingModal] = useState(false);
   const [promptCount, setPromptCount] = useState(() => parseInt(localStorage.getItem(PROMPT_COUNT_KEY) || '0', 10));
   const [showPaywall, setShowPaywall] = useState(!isPremium && parseInt(localStorage.getItem(PROMPT_COUNT_KEY) || '0', 10) >= FREE_PROMPT_LIMIT);
 
@@ -149,6 +152,7 @@ const Dashboard = ({ userData, onLogout, onUpgrade, onSettings }) => {
   return (
     <>
       {showPaywall && <PaywallModal promptsUsed={promptCount} onUpgrade={onUpgrade} onDismiss={() => setShowPaywall(false)} />}
+      {showBriefingModal && <BriefingInfoModal onClose={() => setShowBriefingModal(false)} />}
       {showReviewModal && (
         <DocumentReviewModal
           userData={userData}
@@ -310,6 +314,10 @@ const Dashboard = ({ userData, onLogout, onUpgrade, onSettings }) => {
             <div className="flex gap-2 md:gap-3 items-center mb-2">
               <ReviewDocumentsButton
                 onClick={() => setShowReviewModal(true)}
+                disabled={loading}
+              />
+              <BriefingButton
+                onClick={() => setShowBriefingModal(true)}
                 disabled={loading}
               />
             </div>
