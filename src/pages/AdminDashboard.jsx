@@ -26,12 +26,62 @@ const formatLastSeen = (iso) => {
   return new Date(iso).toLocaleDateString();
 };
 
+const TelegramCodeModal = ({ code, expiresAt, onClose }) => {
+  const [copied, setCopied] = useState(false);
+  const botLink = `https://t.me/LoopedAI_bot?start=${code}`;
+
+  const copyCode = () => {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl border border-black/10 shadow-xl w-full max-w-sm p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold text-sm">New Telegram Link Code</h3>
+          <button onClick={onClose} className="text-black/35 hover:text-black/60 text-lg leading-none">✕</button>
+        </div>
+        <p className="text-xs text-black/45">Share this with the user. They open the link in Telegram to link their account.</p>
+
+        <div className="bg-black/5 rounded-xl p-4 text-center">
+          <p className="font-mono font-black text-2xl tracking-widest text-gold">{code}</p>
+          <p className="text-[10px] text-black/30 mt-1">
+            Expires {expiresAt ? new Date(expiresAt).toLocaleDateString() : '—'}
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <a
+            href={botLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full text-center text-xs bg-[#0088cc] text-white font-bold py-2.5 rounded-xl hover:bg-[#0077b5] transition-all"
+          >
+            Open in Telegram Bot ↗
+          </a>
+          <button
+            onClick={copyCode}
+            className="block w-full text-xs border border-black/12 rounded-xl py-2.5 hover:bg-black/5 transition-all font-medium"
+          >
+            {copied ? '✓ Copied!' : 'Copy Code'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const AdminDashboard = ({ userData, onLogout }) => {
   const [system, setSystem] = useState(null);
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [revoking, setRevoking] = useState('');
+  const [telegramModal, setTelegramModal] = useState(null); // { code, expiresAt }
+  const [resettingTelegram, setResettingTelegram] = useState('');
 
   const token = userData?.access_token;
 
@@ -59,6 +109,28 @@ const AdminDashboard = ({ userData, onLogout }) => {
     return () => clearInterval(id);
   }, [fetchData]);
 
+  const handleResetTelegram = async (userId) => {
+    setResettingTelegram(userId);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/admin/users/${userId}/regenerate-telegram-code`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setTelegramModal({ code: data.link_code, expiresAt: data.link_code_expires_at });
+        fetchData();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setError(`Failed to reset Telegram link: ${err.detail || res.status}`);
+      }
+    } catch {
+      setError('Failed to reset Telegram link: network error');
+    } finally {
+      setResettingTelegram('');
+    }
+  };
+
   const handleRevoke = async (userId, isRevoked) => {
     setRevoking(userId);
     const action = isRevoked ? 'restore' : 'revoke';
@@ -78,6 +150,13 @@ const AdminDashboard = ({ userData, onLogout }) => {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
+      {telegramModal && (
+        <TelegramCodeModal
+          code={telegramModal.code}
+          expiresAt={telegramModal.expiresAt}
+          onClose={() => setTelegramModal(null)}
+        />
+      )}
       {/* Header */}
       <header className="border-b border-black/10 px-4 md:px-6 py-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -166,7 +245,7 @@ const AdminDashboard = ({ userData, onLogout }) => {
                   <table className="w-full text-sm min-w-[480px]">
                     <thead>
                       <tr className="border-b border-black/10">
-                        {['User', 'Status', 'Plan', 'Last Seen', 'Action'].map((h) => (
+                        {['User', 'Status', 'Plan', 'Telegram', 'Action'].map((h) => (
                           <th key={h} className="text-left text-[10px] font-bold text-black/35 uppercase tracking-wider px-4 py-3">{h}</th>
                         ))}
                       </tr>
@@ -194,7 +273,20 @@ const AdminDashboard = ({ userData, onLogout }) => {
                             }
                           </td>
                           <td className="px-4 py-3">
-                            <span className="text-[10px] text-black/35">{formatLastSeen(u.last_seen)}</span>
+                            <div className="flex flex-col gap-1">
+                              {u.is_telegram_enabled ? (
+                                <span className={badge.green}>● Linked</span>
+                              ) : (
+                                <span className={badge.muted}>Not linked</span>
+                              )}
+                              <button
+                                onClick={() => handleResetTelegram(u.id)}
+                                disabled={resettingTelegram === u.id}
+                                className="text-[10px] font-bold px-2 py-1 rounded-lg bg-blue-500/15 text-blue-500 hover:bg-blue-500/25 transition-all disabled:opacity-40 w-fit"
+                              >
+                                {resettingTelegram === u.id ? '…' : 'New Code'}
+                              </button>
+                            </div>
                           </td>
                           <td className="px-4 py-3">
                             {u.is_admin ? (

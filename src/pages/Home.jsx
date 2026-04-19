@@ -4,6 +4,7 @@ import Ticker       from '../components/sections/Ticker'
 import CoreFeatures from '../components/sections/CoreFeatures'
 import Services     from '../components/sections/Services'
 import HowItWorks   from '../components/sections/HowItWorks'
+import Pricing      from '../components/sections/Pricing'
 import About        from '../components/sections/About'
 import CTASection   from '../components/sections/CTASection'
 
@@ -32,6 +33,7 @@ export default function Home() {
       <CoreFeatures />
       <Services />
       <HowItWorks />
+      <Pricing />
       <About />
       <CTASection />
     </>

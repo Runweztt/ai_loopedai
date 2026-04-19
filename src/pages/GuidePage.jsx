@@ -146,6 +146,24 @@ export default function GuidePage() {
 
   return (
     <div className="pt-16 bg-white min-h-screen">
+      <SEO
+        title="Prompt Guide — Get Better Immigration Answers"
+        path="/guide"
+        description="Learn how to ask LoopedAI the right questions. Copy-paste prompts for visa research, document review, timelines, country comparison, and more."
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: 'Prompt Guide | LoopedAI',
+          url: 'https://loopedai.io/guide',
+          breadcrumb: {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://loopedai.io/' },
+              { '@type': 'ListItem', position: 2, name: 'Guide', item: 'https://loopedai.io/guide' },
+            ],
+          },
+        }}
+      />
       {/* Hero */}
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 md:py-24">
         <div ref={heroRef} className="max-w-2xl">

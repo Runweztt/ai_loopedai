@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ShieldCheck, Lock, Eye, Server, AlertTriangle, CheckCircle } from 'lucide-react'
+import SEO from '../components/SEO'
 import CTASection from '../components/sections/CTASection'
 
 const PILLARS = [
@@ -47,6 +48,12 @@ const PRACTICES = [
 export default function SafetyPage() {
   return (
     <div className="pt-24 bg-white min-h-screen text-gray-900">
+      <SEO
+        title="Safety & Trust"
+        path="/safety"
+        description="How LoopedAI keeps your data private, why our AI responses are research-only, and the security principles that govern every part of the platform."
+        noindex={false}
+      />
 
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-6 lg:px-10 py-16 text-center">

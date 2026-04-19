@@ -83,10 +83,17 @@ function ChatApp() {
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [oauthLoading, setOauthLoading] = useState(false)
   const [oauthError, setOauthError]     = useState('')
+  const [upgradeIntent, setUpgradeIntent] = useState(false)
 
   useEffect(() => {
-    // Detect Supabase email-confirmation redirect: /chat?confirmed=true
+    // Detect pricing-page "Upgrade" click: /chat?upgrade=true
     const params = new URLSearchParams(window.location.search)
+    if (params.get('upgrade') === 'true') {
+      setUpgradeIntent(true)
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+
+    // Detect Supabase email-confirmation redirect: /chat?confirmed=true
     if (params.get('confirmed') === 'true') {
       setEmailConfirmed(true)
       setAuthView('login')
@@ -179,8 +186,18 @@ function ChatApp() {
 
   useEffect(() => {
     // Only auto-redirect from auth — don't override 'success' step after registration
-    if (ready && userData?.access_token && step === 'auth') setStep('dashboard')
-  }, [ready, userData, step])
+    if (ready && userData?.access_token && step === 'auth') {
+      setStep(upgradeIntent ? 'payment' : 'dashboard')
+    }
+  }, [ready, userData, step, upgradeIntent])
+
+  // Already-logged-in user clicked "Upgrade to Premium" on the pricing page
+  useEffect(() => {
+    if (ready && upgradeIntent && userData?.access_token && step === 'dashboard') {
+      setUpgradeIntent(false)
+      setStep('payment')
+    }
+  }, [ready, upgradeIntent, userData, step])
 
   // When Stripe redirects back with ?payment=success, refresh the profile
   // from the backend so is_premium updates without requiring a re-login

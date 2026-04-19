@@ -1,8 +1,9 @@
-import SEO       from '../components/SEO'
+import SEO         from '../components/SEO'
 import CoreFeatures from '../components/sections/CoreFeatures'
-import Services   from '../components/sections/Services'
-import HowItWorks from '../components/sections/HowItWorks'
-import CTASection  from '../components/sections/CTASection'
+import Services     from '../components/sections/Services'
+import HowItWorks   from '../components/sections/HowItWorks'
+import Pricing      from '../components/sections/Pricing'
+import CTASection   from '../components/sections/CTASection'
 
 export default function ServicesPage() {
   return (
@@ -28,6 +29,7 @@ export default function ServicesPage() {
       <CoreFeatures />
       <Services />
       <HowItWorks />
+      <Pricing />
       <CTASection />
     </div>
   )

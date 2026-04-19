@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import SEO from '../components/SEO'
 import CTASection from '../components/sections/CTASection'
 
 const LAST_UPDATED = 'April 9, 2026'
@@ -13,6 +14,12 @@ const Section = ({ title, children }) => (
 export default function PrivacyPage() {
   return (
     <div className="pt-24 bg-white min-h-screen text-gray-900">
+      <SEO
+        title="Privacy Policy"
+        path="/privacy"
+        description="LoopedAI's privacy policy — what data we collect, how we use it, and your rights over your personal information."
+        noindex={false}
+      />
 
       {/* Header */}
       <section className="max-w-3xl mx-auto px-6 lg:px-10 py-12">

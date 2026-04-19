@@ -1,0 +1,22 @@
+{
+  "name": "LoopedAI — AI Immigration Assistant",
+  "short_name": "LoopedAI",
+  "description": "AI-powered immigration assistant with real-time visa research, document review, and daily Telegram intelligence briefings.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#C9A84C",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

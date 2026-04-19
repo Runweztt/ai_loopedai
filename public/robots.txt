@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Private app routes — no indexing
+Disallow: /chat
+Disallow: /admin
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://loopedai.io/sitemap.xml

@@ -130,7 +130,10 @@ const Dashboard = ({ userData, onLogout, onUpgrade, onSettings }) => {
 
       if (res.ok) {
         const data = await res.json();
-        setMessages((prev) => [...prev, { role: 'assistant', text: data.response }]);
+        setMessages((prev) => [
+          ...prev,
+          { role: 'assistant', text: data.response, is_clarify: data.is_clarify === true },
+        ]);
         if (!isPremium) {
           const newCount = promptCount + 1;
           localStorage.setItem(PROMPT_COUNT_KEY, String(newCount));
@@ -257,6 +260,8 @@ const Dashboard = ({ userData, onLogout, onUpgrade, onSettings }) => {
                 className={`max-w-[92%] md:max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
                   msg.role === 'user'
                     ? 'bg-gold text-gray-900 font-medium rounded-br-none'
+                    : msg.is_clarify
+                    ? 'bg-amber-50 text-gray-800 border border-amber-200 rounded-bl-none'
                     : 'bg-gray-50 text-gray-800 border border-gray-100 rounded-bl-none'
                 }`}
               >
