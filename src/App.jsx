@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import { API_BASE } from './constants'
 
@@ -25,30 +25,75 @@ import CookieBanner       from './components/CookieBanner'
 
 const SESSION_KEY = 'immigration_ai_session'
 
+// Strip sensitive query params before sending to GA4.
+// OAuth codes, session tokens and payment params must never reach Google.
+function sanitisePath(pathname, search) {
+  const blocked = ['code', 'state', 'token', 'session', 'payment', 'confirmed', 'upgrade', 'oauth']
+  const params = new URLSearchParams(search)
+  blocked.forEach(k => params.delete(k))
+  const clean = params.toString()
+  return clean ? `${pathname}?${clean}` : pathname
+}
+
+// Fires a GA4 page_view on every route change (required for single-page apps
+// because the gtag script only fires once on initial load).
+function GaTracker() {
+  const location = useLocation()
+  useEffect(() => {
+    if (typeof window.gtag !== 'function') return
+    window.gtag('event', 'page_view', {
+      page_path:  sanitisePath(location.pathname, location.search),
+      page_title: document.title,
+    })
+  }, [location])
+  return null
+}
+
 function useSession() {
   const [userData, setUserData] = useState(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem(SESSION_KEY)
-    if (saved) {
+    // Profile (non-sensitive) lives in localStorage so it survives browser close.
+    // The access_token lives in sessionStorage only — cleared when the tab closes,
+    // so a stolen token has a much shorter window of usefulness.
+    const profile = localStorage.getItem(SESSION_KEY)
+    const token   = sessionStorage.getItem(`${SESSION_KEY}_token`)
+    if (profile && token) {
       try {
-        const parsed = JSON.parse(saved)
-        if (parsed?.access_token) setUserData(parsed)
-      } catch { localStorage.removeItem(SESSION_KEY) }
+        const parsed = JSON.parse(profile)
+        if (parsed) setUserData({ ...parsed, access_token: token })
+      } catch {
+        localStorage.removeItem(SESSION_KEY)
+        sessionStorage.removeItem(`${SESSION_KEY}_token`)
+      }
     }
     setReady(true)
   }, [])
 
   const save = (data) => {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(data))
+    // Split: token → sessionStorage, everything else → localStorage
+    const { access_token, ...profile } = data
+    localStorage.setItem(SESSION_KEY, JSON.stringify(profile))
+    if (access_token) sessionStorage.setItem(`${SESSION_KEY}_token`, access_token)
     setUserData(data)
   }
 
-  const clear = () => {
+  const clear = async (token) => {
+    // Tell the backend to invalidate the token before clearing it locally.
+    // If the endpoint doesn't exist yet or the call fails, we still log out.
+    if (token) {
+      try {
+        await fetch(`${API_BASE}/api/v1/auth/logout`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        })
+      } catch { /* ignore network errors — local logout still proceeds */ }
+    }
     localStorage.removeItem(SESSION_KEY)
     localStorage.removeItem('immigration_ai_prompt_count')
     localStorage.removeItem('loopedai_current_session')
+    sessionStorage.removeItem(`${SESSION_KEY}_token`)
     setUserData(null)
   }
 
@@ -222,7 +267,7 @@ function ChatApp() {
       .catch(() => setStep('premium-success'))
   }, [paymentSuccess])
 
-  const handleLogout = () => { clearUserData(); setStep('auth'); setAuthView('login') }
+  const handleLogout = () => { clearUserData(userData?.access_token); setStep('auth'); setAuthView('login') }
 
   // Called by AccountSettingsPage after a successful profile save.
   // Merges updated fields into the stored session without a full re-login.
@@ -320,7 +365,7 @@ function AdminApp() {
   const { userData, setUserData, clearUserData, ready } = useSession()
   const [authView, setAuthView] = useState('login')
 
-  const handleLogout = () => { clearUserData() }
+  const handleLogout = () => { clearUserData(userData?.access_token) }
 
   if (!ready) return (
     <Layout isFullWidth={false}>
@@ -353,7 +398,7 @@ function AdminApp() {
 
   // Logged in but not admin — clear stale session and show login form
   if (!userData.is_admin) {
-    clearUserData()
+    clearUserData(userData?.access_token)
     return null
   }
 
@@ -382,6 +427,7 @@ function MarketingLayout() {
 export default function App() {
   return (
     <BrowserRouter>
+      <GaTracker />
       <div
         className="fixed inset-0 pointer-events-none z-[9997]"
         style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px)' }}

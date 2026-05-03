@@ -74,14 +74,23 @@ const TelegramCodeModal = ({ code, expiresAt, onClose }) => {
   );
 };
 
+const fmtDuration = (seconds) => {
+  if (!seconds) return '—';
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return m > 0 ? `${m}m ${s}s` : `${s}s`;
+};
+
 const AdminDashboard = ({ userData, onLogout }) => {
   const [system, setSystem] = useState(null);
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [revoking, setRevoking] = useState('');
+  const [togglingPremium, setTogglingPremium] = useState('');
   const [telegramModal, setTelegramModal] = useState(null); // { code, expiresAt }
   const [resettingTelegram, setResettingTelegram] = useState('');
+
 
   const token = userData?.access_token;
 
@@ -108,6 +117,7 @@ const AdminDashboard = ({ userData, onLogout }) => {
     const id = setInterval(fetchData, 30000);
     return () => clearInterval(id);
   }, [fetchData]);
+
 
   const handleResetTelegram = async (userId) => {
     setResettingTelegram(userId);
@@ -145,6 +155,23 @@ const AdminDashboard = ({ userData, onLogout }) => {
       setError(`Failed to ${action} user.`);
     } finally {
       setRevoking('');
+    }
+  };
+
+  const handleTogglePremium = async (userId, isPremium) => {
+    setTogglingPremium(userId);
+    const action = isPremium ? 'revoke-premium' : 'grant-premium';
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/admin/users/${userId}/${action}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) fetchData();
+      else setError(`Failed to ${isPremium ? 'revoke' : 'grant'} premium.`);
+    } catch {
+      setError(`Failed to update premium status.`);
+    } finally {
+      setTogglingPremium('');
     }
   };
 
@@ -229,6 +256,22 @@ const AdminDashboard = ({ userData, onLogout }) => {
               </div>
             </section>
 
+            {/* Site Analytics */}
+            <section>
+              <h2 className="text-xs font-bold text-black/35 uppercase tracking-widest mb-3">Site Analytics</h2>
+              <div className="rounded-2xl overflow-hidden border border-black/10">
+                <iframe
+                  src="https://datastudio.google.com/embed/reporting/b238395b-7d2c-42fd-9526-71c662bde383/page/pP4wF"
+                  width="100%"
+                  height="600"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                />
+              </div>
+            </section>
+
             {/* User Stats + Table */}
             {users && (
               <section>
@@ -292,17 +335,30 @@ const AdminDashboard = ({ userData, onLogout }) => {
                             {u.is_admin ? (
                               <span className="text-[10px] text-gold font-bold">Admin</span>
                             ) : (
-                              <button
-                                onClick={() => handleRevoke(u.id, u.is_revoked)}
-                                disabled={revoking === u.id}
-                                className={`text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all disabled:opacity-40 ${
-                                  u.is_revoked
-                                    ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
-                                    : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
-                                }`}
-                              >
-                                {revoking === u.id ? '…' : u.is_revoked ? 'Restore' : 'Revoke'}
-                              </button>
+                              <div className="flex flex-col gap-1.5">
+                                <button
+                                  onClick={() => handleTogglePremium(u.id, u.is_premium)}
+                                  disabled={togglingPremium === u.id}
+                                  className={`text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all disabled:opacity-40 ${
+                                    u.is_premium
+                                      ? 'bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30'
+                                      : 'bg-yellow-500/10 text-yellow-600/60 hover:bg-yellow-500/20'
+                                  }`}
+                                >
+                                  {togglingPremium === u.id ? '…' : u.is_premium ? 'Revoke Premium' : 'Grant Premium'}
+                                </button>
+                                <button
+                                  onClick={() => handleRevoke(u.id, u.is_revoked)}
+                                  disabled={revoking === u.id}
+                                  className={`text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all disabled:opacity-40 ${
+                                    u.is_revoked
+                                      ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                                      : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                                  }`}
+                                >
+                                  {revoking === u.id ? '…' : u.is_revoked ? 'Restore' : 'Revoke'}
+                                </button>
+                              </div>
                             )}
                           </td>
                         </tr>

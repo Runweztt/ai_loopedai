@@ -109,6 +109,8 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
   const [checklist, setChecklist] = useState(null);
   const [checklistLoading, setChecklistLoading] = useState(false);
   const [checklistError, setChecklistError] = useState('');
+  const [loadingStage, setLoadingStage] = useState(0);
+  const loadingTimersRef = useRef([]);
 
   // Step 3/4: file upload
   const [files, setFiles] = useState([]);
@@ -124,44 +126,75 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
   // Step 6: report
   const [report, setReport] = useState(null);
 
-  // On mount: resume an in-progress review if reviewId is in sessionStorage
+  // On mount: resume an in-progress review if reviewId is in sessionStorage.
+  // Validate the ID format before trusting it — prevents sessionStorage injection.
   useEffect(() => {
     const savedId = sessionStorage.getItem(SESSION_KEY);
-    if (savedId && userData?.access_token) {
+    const isValidId = savedId && /^[0-9a-f-]{36}$/i.test(savedId);
+    if (isValidId && userData?.access_token) {
       setReviewId(savedId);
       setStep('progress');
       setProgress({ percent: 0, step: 'Resuming review...' });
       startPolling(savedId);
+    } else if (savedId && !isValidId) {
+      sessionStorage.removeItem(SESSION_KEY);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Clean up polling timeout on unmount
   useEffect(() => {
-    return () => { if (pollRef.current) clearTimeout(pollRef.current); };
+    return () => {
+      if (pollRef.current) clearTimeout(pollRef.current);
+      loadingTimersRef.current.forEach(clearTimeout);
+    };
   }, []);
 
   // ── Step 1 → 2: Fetch checklist ──────────────────────────────────
+
+  const LOADING_STAGE_LABELS = [
+    'Searching official sources...',
+    'Filtering and ranking sources...',
+    'Extracting requirements...',
+    'Building your checklist...',
+  ];
+
+  const LOADING_STAGE_DELAYS = [0, 2500, 6000, 10000];
 
   const handleFetchChecklist = async () => {
     if (!country.trim() || !visaType.trim()) return;
     setChecklistLoading(true);
     setChecklistError('');
+    setLoadingStage(0);
+
+    // Advance loading stage labels on a timer while the request is in flight
+    loadingTimersRef.current.forEach(clearTimeout);
+    loadingTimersRef.current = LOADING_STAGE_DELAYS.slice(1).map((delay, i) =>
+      setTimeout(() => setLoadingStage(i + 1), delay)
+    );
+
     try {
       const res = await fetch(`${API_BASE}/api/visa-review/checklist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ country, visa_type: visaType, chat_history: [] }),
+        body: JSON.stringify({
+          country,
+          visa_type: visaType,
+          nationality: nationality || '',
+          chat_history: [],
+        }),
       });
       if (!res.ok) throw new Error('Failed to load checklist');
       const data = await res.json();
       setChecklist(data);
       setStep('checklist');
     } catch (e) {
-      setChecklistError('Could not load checklist. You can still proceed to upload your documents.');
-      setChecklist({ required: [], conditional: [], optional: [], source_label: '', cache_warning: '' });
+      setChecklistError('Could not load requirements. You can still proceed to upload your documents.');
+      setChecklist({ required: [], conditional: [], optional: [], source_label: '', cache_warning: '', confidence_level: 'low' });
       setStep('checklist');
     } finally {
+      loadingTimersRef.current.forEach(clearTimeout);
+      loadingTimersRef.current = [];
       setChecklistLoading(false);
     }
   };
@@ -170,7 +203,16 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
 
   const handleFilesSelected = useCallback((selectedFiles) => {
     const arr = Array.from(selectedFiles);
-    const valid = arr.filter((f) => /\.(pdf|docx|jpg|jpeg|png)$/i.test(f.name));
+    const ALLOWED_TYPES = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/jpeg',
+      'image/png',
+    ];
+    // Validate both MIME type AND extension — extension alone can be spoofed
+    const valid = arr.filter(
+      (f) => ALLOWED_TYPES.includes(f.type) && /\.(pdf|docx|jpg|jpeg|png)$/i.test(f.name)
+    );
     setFiles((prev) => {
       const names = new Set(prev.map((f) => f.name));
       const merged = [...prev, ...valid.filter((f) => !names.has(f.name))];
@@ -332,7 +374,9 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
               disabled={!country.trim() || !visaType.trim() || checklistLoading}
               className="w-full bg-gold hover:bg-gold-muted text-gray-900 font-bold py-3 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm shadow-btn"
             >
-              {checklistLoading ? 'Loading checklist...' : 'Show Required Documents'}
+              {checklistLoading
+                ? LOADING_STAGE_LABELS[loadingStage]
+                : 'Show Required Documents'}
             </button>
             {checklistError && <p className="text-red-400 text-xs text-center">{checklistError}</p>}
           </div>
@@ -344,16 +388,33 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
         <>
           <ModalHeader
             title={`Documents for ${visaType} — ${country}`}
-            subtitle={checklist.source_label || 'Based on official requirements'}
+            subtitle={checklist.source_label || 'Based on official immigration requirements'}
           />
           <div className="px-6 py-4 overflow-y-auto flex-1 space-y-4">
-            {checklist.cache_warning && (
-              <p className="text-xs text-yellow-400/70 bg-yellow-400/10 border border-yellow-400/20 rounded-lg px-3 py-2">
-                {checklist.cache_warning}
-              </p>
+
+            {/* Confidence badge */}
+            {checklist.confidence_level === 'high' && (
+              <div className="flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg">
+                <span className="text-green-500 text-sm font-bold">&#10003;</span>
+                <p className="text-xs text-green-700 font-medium">Official government sources verified</p>
+              </div>
+            )}
+            {checklist.confidence_level === 'medium' && (
+              <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                <span className="text-blue-400 text-sm">&#8505;</span>
+                <p className="text-xs text-blue-700">Based on reliable immigration sources — verify with the official embassy.</p>
+              </div>
+            )}
+            {(checklist.confidence_level === 'low' || checklist.cache_warning) && (
+              <div className="flex items-start gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg">
+                <span className="text-amber-500 text-sm flex-shrink-0 mt-0.5">&#9888;</span>
+                <p className="text-xs text-amber-700 leading-relaxed">
+                  {checklist.cache_warning || 'Limited verified information available. Verify requirements with the official embassy or consulate.'}
+                </p>
+              </div>
             )}
 
-            {/* Empty state — API failed or returned no items */}
+            {/* Empty state */}
             {!checklist.required?.length && !checklist.conditional?.length && !checklist.optional?.length && (
               <div className="flex flex-col items-center gap-3 py-4 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-black/25" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -408,6 +469,53 @@ const DocumentReviewModal = ({ onClose, onReportReady, chatContext = {}, userDat
                     <li key={i} className="flex gap-2 text-sm text-gray-400">
                       <span className="text-gray-300 flex-shrink-0 mt-0.5">+</span>
                       {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Fees and processing time */}
+            {(checklist.fees || checklist.processing_time) && (
+              <div className="flex gap-3 flex-wrap pt-1">
+                {checklist.fees && (
+                  <span className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600">
+                    <span className="font-semibold">Fee:</span> {checklist.fees}
+                  </span>
+                )}
+                {checklist.processing_time && (
+                  <span className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600">
+                    <span className="font-semibold">Processing:</span> {checklist.processing_time}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Notes */}
+            {checklist.notes?.length > 0 && (
+              <div className="space-y-1">
+                {checklist.notes.map((note, i) => (
+                  <p key={i} className="text-xs text-gray-400 italic leading-relaxed">{note}</p>
+                ))}
+              </div>
+            )}
+
+            {/* Sources */}
+            {checklist.sources?.filter(s => s.url).length > 0 && (
+              <div className="pt-1 border-t border-gray-100">
+                <p className="text-xs text-gray-400 mb-1.5 font-medium">Sources</p>
+                <ul className="space-y-1">
+                  {checklist.sources.filter(s => s.url).slice(0, 3).map((src, i) => (
+                    <li key={i} className="flex items-center gap-1.5">
+                      {src.is_official && <span className="text-green-400 text-xs">&#10003;</span>}
+                      <a
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-gold/70 hover:text-gold underline truncate max-w-xs transition-all"
+                      >
+                        {src.title || src.url}
+                      </a>
                     </li>
                   ))}
                 </ul>
